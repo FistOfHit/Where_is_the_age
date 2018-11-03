@@ -1,0 +1,28 @@
+---
+title: "Population_analysis"
+author: "Hitesh Kumar"
+date: "3 November 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Where is my age? - population dataset analysis
+
+#### "I was hoping to do this in Python, but honestly it's so much more
+appropriate to do this in R." - me
+
+Here we take a look at a relatively small dataset with information about the
+population sizes across various locations throughout the UK and across various
+ages.
+
+In this short project, we will stick to the Question and Answer format given,
+but might take some detours along the way.
+
+```{r }
+
+
+
+
