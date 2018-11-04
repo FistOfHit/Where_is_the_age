@@ -127,15 +127,13 @@ $(document).ready(function () {
 
 <div id="where-is-my-age---population-dataset-analysis" class="section level1">
 <h1>Where is my age? - population dataset analysis</h1>
-<div id="i-was-hoping-to-do-this-in-python-but-honestly-its-so-much-more-appropriate-to-do-this-in-r.---me" class="section level4">
-<h4>“I was hoping to do this in Python, but honestly it’s so much more appropriate to do this in R.” - me</h4>
+<div id="i-was-hoping-to-do-this-in-python-but-honestly-its-much-more-appropriate-to-do-this-in-r.---me" class="section level4">
+<h4>“I was hoping to do this in Python, but honestly it’s much more appropriate to do this in R.” - me</h4>
 <p>Here we take a look at a relatively small dataset with information about the population sizes across various locations throughout the UK and across various ages.</p>
 <p>In this short project, we will stick to the Question and Answer format given, but might take some detours along the way.</p>
-<p>Of course, since this document might be read by HR looking for buzzwords in a tickbox fashion (given how many companies do this, you cant blame me for being wary),</p>
 </div>
 <div id="ive-summarised-my-answers-in-bullet-points-at-the-start-of-each-question" class="section level3">
 <h3><strong>I’ve summarised my answers in bullet points at the start of each question</strong></h3>
-<p>so you can read just those and still know what conclusions I’ve come to.</p>
 <pre class="r"><code># Expect some function clashes, not important though
 library(readxl)
 library(ggplot2)
@@ -151,6 +149,14 @@ library(dplyr)</code></pre>
 </div>
 <div id="question-1" class="section level2">
 <h2>Question 1</h2>
+<div id="summary" class="section level4">
+<h4>Summary:</h4>
+<ul>
+<li>The collumn names weren’t very freindly, so we gave them more meaningful names</li>
+<li>Everything was stored as strings, not useful for dealing with numberslike age or population size, we converted the collumn data types as appropriate</li>
+<li>Age is catagorical here, and one of the catagories, “90+” wasnt very freindly so we replaced it by “90” and it means the same thing to us</li>
+<li>Geography code is most likely useless for us, and so isn’t needed.</li>
+</ul>
 <p>Lets see what we are dealing with.</p>
 <pre class="r"><code>raw_import_data = read_excel(&quot;population.xlsx&quot;, sheet = &quot;Dataset&quot;)
 head(raw_import_data, 10)</code></pre>
@@ -169,8 +175,13 @@ head(raw_import_data, 10)</code></pre>
 ## 10 Aberde~ S12000033                   10    Fema~ 851.0 886.0 929.0 966.0</code></pre>
 <p>This dosent look very good. lets try to clean it up in place with some more helpful collumn names and less clutter. We’ll rename the collumns with the orignal names (mistakenly put into the actual frame by the readxl function) and remove the first two rows (empty row and names).</p>
 <p>(We’re only working with one dataset here, we know the context so lets just call it “xxxxx_data”)</p>
-<pre class="r"><code>colnames(raw_import_data) = c(raw_import_data[2, ])
-cleaned_data = raw_import_data[-1:-2, ]
+<pre class="r"><code># Always keep raw data away from any edits
+cleaned_data =  raw_import_data
+
+# Rename collumns with information from second row, remove useless rows
+colnames(cleaned_data) = c(cleaned_data[2, ])
+cleaned_data = cleaned_data[-1:-2, ]
+
 head(cleaned_data, 10)</code></pre>
 <pre><code>## # A tibble: 10 x 8
 ##    Geography     `Geography code` Age   Sex    `2013` `2014` `2015` `2016`
@@ -199,38 +210,70 @@ head(cleaned_data, 10)</code></pre>
 ##  8 Yorkshire an~ E12000003        90+   All    41844~ 43799~ 43821~ 44963~
 ##  9 Yorkshire an~ E12000003        90+   Female 30244~ 31337~ 31006~ 31657~
 ## 10 Yorkshire an~ E12000003        90+   Male   11600~ 12462~ 12815~ 13306~</code></pre>
-<p>Additionally, we should sort the ages properly, right now its ordered by the first digit of the age, but in context, we know that age isn’t ordered like this. To fix this, we can sort the dataframe by the third collumn and then by the first collumn, this will let us sort the ages but then put everything back in alphabetic order by the geography names.</p>
-<pre class="r"><code>colnames(raw_import_data) = c(raw_import_data[2, ])
-cleaned_data = raw_import_data[-1:-2, ]
+<p>Additionally, we should make sure the data types of the values in the data frame are appropriate. It seems that everything is stored as strings within the frame. This also explains why 9 comes after 89 here! So lets convert age and population sizes in each year to numbers.</p>
+<p>One issue is that the Age catagory has an entry of “90+” which would result in NULL values when forced to numeric (as.numeric() is very smart when converting factors to numbers, but not that smart) . To counter this, we can rename the 90+ catagory to just 90. This would preserve the information (as we know now that the number 90 will mean all ages 90 and above) and make things easy to work with. Converting age to a double as opposed to 8 bit int isnt too important as performance isnt an issue yet.</p>
+<pre class="r"><code># Replace all instances of '90' string with '90'
+cleaned_data$Age[cleaned_data$Age == '90+'] = '90'
+cleaned_data$Age = as.numeric(cleaned_data$Age)
+
 head(cleaned_data, 10)</code></pre>
 <pre><code>## # A tibble: 10 x 8
-##    Geography     `Geography code` Age   Sex    `2013` `2014` `2015` `2016`
-##    &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; 
-##  1 Aberdeen City S12000033        0     All    2529.0 2560.0 2518.0 2533.0
-##  2 Aberdeen City S12000033        0     Female 1227.0 1247.0 1219.0 1238.0
-##  3 Aberdeen City S12000033        0     Male   1302.0 1313.0 1299.0 1295.0
-##  4 Aberdeen City S12000033        1     All    2589.0 2466.0 2493.0 2454.0
-##  5 Aberdeen City S12000033        1     Female 1281.0 1203.0 1216.0 1200.0
-##  6 Aberdeen City S12000033        1     Male   1308.0 1263.0 1277.0 1254.0
-##  7 Aberdeen City S12000033        10    All    1760.0 1777.0 1908.0 1945.0
-##  8 Aberdeen City S12000033        10    Female 851.0  886.0  929.0  966.0 
-##  9 Aberdeen City S12000033        10    Male   909.0  891.0  979.0  979.0 
-## 10 Aberdeen City S12000033        11    All    1759.0 1742.0 1781.0 1889.0</code></pre>
+##    Geography     `Geography code`   Age Sex    `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;         &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; 
+##  1 Aberdeen City S12000033            0 All    2529.0 2560.0 2518.0 2533.0
+##  2 Aberdeen City S12000033            0 Female 1227.0 1247.0 1219.0 1238.0
+##  3 Aberdeen City S12000033            0 Male   1302.0 1313.0 1299.0 1295.0
+##  4 Aberdeen City S12000033            1 All    2589.0 2466.0 2493.0 2454.0
+##  5 Aberdeen City S12000033            1 Female 1281.0 1203.0 1216.0 1200.0
+##  6 Aberdeen City S12000033            1 Male   1308.0 1263.0 1277.0 1254.0
+##  7 Aberdeen City S12000033           10 All    1760.0 1777.0 1908.0 1945.0
+##  8 Aberdeen City S12000033           10 Female 851.0  886.0  929.0  966.0 
+##  9 Aberdeen City S12000033           10 Male   909.0  891.0  979.0  979.0 
+## 10 Aberdeen City S12000033           11 All    1759.0 1742.0 1781.0 1889.0</code></pre>
 <pre class="r"><code>tail(cleaned_data, 10)</code></pre>
 <pre><code>## # A tibble: 10 x 8
-##    Geography     `Geography code` Age   Sex    `2013` `2014` `2015` `2016`
-##    &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; 
-##  1 Yorkshire an~ E12000003        88    Male   4622.0 4817.0 4956.0 4961.0
-##  2 Yorkshire an~ E12000003        89    All    11496~ 11509~ 11834~ 11915~
-##  3 Yorkshire an~ E12000003        89    Female 7613.0 7562.0 7761.0 7716.0
-##  4 Yorkshire an~ E12000003        89    Male   3883.0 3947.0 4073.0 4199.0
-##  5 Yorkshire an~ E12000003        9     All    59887~ 61377~ 64248~ 65126~
-##  6 Yorkshire an~ E12000003        9     Female 29319~ 30282~ 31461~ 31880~
-##  7 Yorkshire an~ E12000003        9     Male   30568~ 31095~ 32787~ 33246~
-##  8 Yorkshire an~ E12000003        90+   All    41844~ 43799~ 43821~ 44963~
-##  9 Yorkshire an~ E12000003        90+   Female 30244~ 31337~ 31006~ 31657~
-## 10 Yorkshire an~ E12000003        90+   Male   11600~ 12462~ 12815~ 13306~</code></pre>
-<p>Now we have quite a few tasks ahead of us. We should always check our data before use (even before exploratory analysis) for any surpises or inconsistencies etc. The checks we might want to do here are: - Is there always a one to one mapping between geography and its code? - If not, does this mean the Geography codes are neccessary or useless? - Does every geography have data for all age catagories? (integers from 0 to 89, and 90+) - Does every geography</p>
+##    Geography     `Geography code`   Age Sex    `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;         &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; 
+##  1 Yorkshire an~ E12000003           88 Male   4622.0 4817.0 4956.0 4961.0
+##  2 Yorkshire an~ E12000003           89 All    11496~ 11509~ 11834~ 11915~
+##  3 Yorkshire an~ E12000003           89 Female 7613.0 7562.0 7761.0 7716.0
+##  4 Yorkshire an~ E12000003           89 Male   3883.0 3947.0 4073.0 4199.0
+##  5 Yorkshire an~ E12000003            9 All    59887~ 61377~ 64248~ 65126~
+##  6 Yorkshire an~ E12000003            9 Female 29319~ 30282~ 31461~ 31880~
+##  7 Yorkshire an~ E12000003            9 Male   30568~ 31095~ 32787~ 33246~
+##  8 Yorkshire an~ E12000003           90 All    41844~ 43799~ 43821~ 44963~
+##  9 Yorkshire an~ E12000003           90 Female 30244~ 31337~ 31006~ 31657~
+## 10 Yorkshire an~ E12000003           90 Male   11600~ 12462~ 12815~ 13306~</code></pre>
+<p>We should be aware that the boolean mask we are using to replace the values in the data frame is a very ineffeicient method and is only really acceptable for small datasets like this. For larger data sets, we would have to explore other ways of finding values and assigning them to a set of data, such as converting to a matrix, or even using external software.</p>
+<p>Lets fix the other collumns too now:</p>
+<pre class="r"><code># Convert all year collumns
+cleaned_data[ , 5:8] = as.numeric(unlist(cleaned_data[ , 5:8]))
+
+tail(cleaned_data, 10)</code></pre>
+<pre><code>## # A tibble: 10 x 8
+##    Geography      `Geography code`   Age Sex   `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;          &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Yorkshire and~ E12000003           88 Male    4622   4817   4956   4961
+##  2 Yorkshire and~ E12000003           89 All    11496  11509  11834  11915
+##  3 Yorkshire and~ E12000003           89 Fema~   7613   7562   7761   7716
+##  4 Yorkshire and~ E12000003           89 Male    3883   3947   4073   4199
+##  5 Yorkshire and~ E12000003            9 All    59887  61377  64248  65126
+##  6 Yorkshire and~ E12000003            9 Fema~  29319  30282  31461  31880
+##  7 Yorkshire and~ E12000003            9 Male   30568  31095  32787  33246
+##  8 Yorkshire and~ E12000003           90 All    41844  43799  43821  44963
+##  9 Yorkshire and~ E12000003           90 Fema~  30244  31337  31006  31657
+## 10 Yorkshire and~ E12000003           90 Male   11600  12462  12815  13306</code></pre>
+<p>Ok, so finally it seems we have a nice looking dataset.</p>
+<p>Now we still have quite a few tasks ahead of us. We should always check our data before use (even before exploratory analysis) for any surpises or inconsistencies etc. The checks we might want to do here are:</p>
+<ul>
+<li>Is there always a one to one mapping between geography and its code? <strong>(Can check this by creating a hash map or dictionary and looking for any multiple values to any keys)</strong></li>
+<li>If not, does this mean that the Geography codes are neccessary or useless? <strong>(Probabaly useless)</strong></li>
+<li>Does every geography have data for all age catagories? (integers from 0 to 90) <strong>(Again, can create a hash map and compare values to each key against expectations)</strong></li>
+<li>Are there any missing entries <strong>(Can create a heat map of the data frame by index and look for any 0’s)</strong></li>
+</ul>
+<p>But in this situation, its quite reasonable to assume that none of these extreme cases will be realised here. Lets finally get rid of the geography code collumn</p>
+<pre class="r"><code>cleaned_data = cleaned_data[ , -2]</code></pre>
+</div>
 </div>
 </div>
 

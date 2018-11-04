@@ -20,15 +20,9 @@ ages.
 In this short project, we will stick to the Question and Answer format given,
 but might take some detours along the way.
 
-Of course, since this document might be read by HR looking for buzzwords in a
-tickbox fashion (given how many companies do this, you cant blame me for being
-wary), 
-
 ### **I've summarised my answers in bullet points at the
 start of each question**
 
-so you can read just those and still know what
-conclusions I've come to. 
 
 ```{r Libraries/Imports}
 # Expect some function clashes, not important though
@@ -38,6 +32,17 @@ library(dplyr)
 ```
 
 ## Question 1
+
+#### Summary:
+* The collumn names weren't very freindly, so we gave them more meaningful
+names
+* Everything was stored as strings, not useful for dealing with numberslike age
+or population size, we converted the collumn data types as appropriate
+* Age is catagorical here, and one of the catagories, "90+" wasnt very freindly
+so we replaced it by "90" and it means the same thing to us
+* Geography code is most likely useless for us, and so isn't needed.
+* I present some solutions to more minor problems at the end
+
 Lets see what we are dealing with.
 
 ```{r Load and inspect}
@@ -57,43 +62,100 @@ call it "xxxxx_data")
 
 ```{r collumn naming}
 
-colnames(raw_import_data) = c(raw_import_data[2, ])
-cleaned_data = raw_import_data[-1:-2, ]
+# Always keep raw data away from any edits
+cleaned_data =  raw_import_data
+
+# Rename collumns with information from second row, remove useless rows
+colnames(cleaned_data) = c(cleaned_data[2, ])
+cleaned_data = cleaned_data[-1:-2, ]
+
 head(cleaned_data, 10)
 tail(cleaned_data, 10)
 
 ```
 
-Additionally, we should sort the ages properly, right now its ordered by the
-first digit of the age, but in context, we know that age isn't ordered like
-this. To fix this, we can sort the dataframe by the third collumn and then by
-the first collumn, this will let us sort the ages but then put everything back
-in alphabetic order by the geography names. 
+Additionally, we should make sure the data types of the values in the data
+frame are appropriate. It seems that everything is stored as strings within
+the frame. This also explains why 9 comes after 89 here! So lets convert age
+and population sizes in each year to numbers.
 
-```{r sorting age 1}
+One issue is that the Age catagory has an entry of "90+" which would result
+in NULL values when forced to numeric (as.numeric() is very smart when
+converting factors to numbers, but not that smart) . To counter this, we can
+rename the 90+ catagory to just 90. This would preserve the information (as we
+know now that the number 90 will mean all ages 90 and above) and make things
+easy to work with. Converting age to a double as opposed to 8 bit int isnt too
+important as performance isnt an issue yet.
 
-colnames(raw_import_data) = c(raw_import_data[2, ])
-cleaned_data = raw_import_data[-1:-2, ]
+```{r fixing data types 1}
+
+# Replace all instances of '90' string with '90'
+cleaned_data$Age[cleaned_data$Age == '90+'] = '90'
+cleaned_data$Age = as.numeric(cleaned_data$Age)
+
 head(cleaned_data, 10)
 tail(cleaned_data, 10)
 
 ```
 
+We should be aware that the boolean mask we are using to replace the values in
+the data frame is a very ineffeicient method and is only really acceptable for
+small datasets like this. For larger data sets, we would have to explore other
+ways of finding values and assigning them to a set of data, such as converting
+to a matrix, or even using external software.
 
+Lets fix the other collumns too now:
 
+```{r fixing data types 2}
 
-Now we have quite a few tasks ahead of us. We should always check our data
-before use (even before exploratory analysis) for any surpises or
+# Convert all year collumns
+cleaned_data[ , 5:8] = as.numeric(unlist(cleaned_data[ , 5:8]))
+
+tail(cleaned_data, 10)
+
+```
+
+Ok, so finally it seems we have a nice looking dataset. 
+
+Now we still have quite a few tasks ahead of us. We should always check our
+data before use (even before exploratory analysis) for any surpises or
 inconsistencies etc. The checks we might want to do here are:
-- Is there always a one to one mapping between geography and its code?
-- If not, does this mean the Geography codes are neccessary or useless?
-- Does every geography have data for all age catagories? (integers from 0 to
-89, and 90+)
-- Does every geography 
+
+* Is there always a one to one mapping between geography and its code? **(Can check this by creating a hash map or dictionary and looking for any multiple values to any keys)**
+* If not, does this mean that the Geography codes are neccessary or useless? **(Probabaly useless)**
+* Does every geography have data for all age catagories? (integers from 0 to 90) **(Again, can create a hash map and compare values to each key against expectations)**
+* Are there any missing entries **(Can create a heat map of the data frame by index and look for any 0's)**
+
+But in this situation, its quite reasonable to assume that none of these
+extreme cases will be realised here. Lets finally get rid of the geography code
+collumn
+
+```{r Removing geography code}
+
+cleaned_data = cleaned_data[ , -2]
+
+```
+
+## Question 2
+
+#### Summary:
+* The smallest total population belonged to:
+  * 2013:
+  * 2014:
+  * 2015:
+  * 2016:
+
+This should be quite a simple task, since we've converted the population values
+to numbers, we find the total population size for each geography by summing
+over each age catagory for each year. Lets demonstrate what we mean:
+
+```{r}
 
 
 
 
+
+```
 
 
 
