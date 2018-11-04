@@ -1,5 +1,4 @@
 ---
-title: "Population_analysis"
 author: "Hitesh Kumar"
 date: "3 November 2018"
 output: html_document
@@ -9,9 +8,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Where is my age? - population dataset analysis
+# Where is my age? - population dataset analysis
 
-#### "I was hoping to do this in Python, but honestly it's so much more
+#### "I was hoping to do this in Python, but honestly it's much more
 appropriate to do this in R." - me
 
 Here we take a look at a relatively small dataset with information about the
@@ -21,7 +20,80 @@ ages.
 In this short project, we will stick to the Question and Answer format given,
 but might take some detours along the way.
 
-```{r }
+Of course, since this document might be read by HR looking for buzzwords in a
+tickbox fashion (given how many companies do this, you cant blame me for being
+wary), 
+
+### **I've summarised my answers in bullet points at the
+start of each question**
+
+so you can read just those and still know what
+conclusions I've come to. 
+
+```{r Libraries/Imports}
+# Expect some function clashes, not important though
+library(readxl)
+library(ggplot2)
+library(dplyr)
+```
+
+## Question 1
+Lets see what we are dealing with.
+
+```{r Load and inspect}
+
+raw_import_data = read_excel("population.xlsx", sheet = "Dataset")
+head(raw_import_data, 10)
+
+```
+
+This dosent look very good. lets try to clean it up in place with some more
+helpful collumn names and less clutter. We'll rename the collumns with the
+orignal names (mistakenly put into the actual frame by the readxl function) and
+remove the first two rows (empty row and names).
+
+(We're only working with one dataset here, we know the context so lets just
+call it "xxxxx_data")
+
+```{r collumn naming}
+
+colnames(raw_import_data) = c(raw_import_data[2, ])
+cleaned_data = raw_import_data[-1:-2, ]
+head(cleaned_data, 10)
+tail(cleaned_data, 10)
+
+```
+
+Additionally, we should sort the ages properly, right now its ordered by the
+first digit of the age, but in context, we know that age isn't ordered like
+this. To fix this, we can sort the dataframe by the third collumn and then by
+the first collumn, this will let us sort the ages but then put everything back
+in alphabetic order by the geography names. 
+
+```{r sorting age 1}
+
+colnames(raw_import_data) = c(raw_import_data[2, ])
+cleaned_data = raw_import_data[-1:-2, ]
+head(cleaned_data, 10)
+tail(cleaned_data, 10)
+
+```
+
+
+
+
+Now we have quite a few tasks ahead of us. We should always check our data
+before use (even before exploratory analysis) for any surpises or
+inconsistencies etc. The checks we might want to do here are:
+- Is there always a one to one mapping between geography and its code?
+- If not, does this mean the Geography codes are neccessary or useless?
+- Does every geography have data for all age catagories? (integers from 0 to
+89, and 90+)
+- Does every geography 
+
+
+
+
 
 
 
