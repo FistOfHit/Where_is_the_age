@@ -115,7 +115,10 @@ tail(cleaned_data, 10)
 
 ```
 
-Ok, so finally it seems we have a nice looking dataset. 
+Ok, so finally it seems we have a nice looking dataset. We could still sort the
+ages into ascending order by numbers, but it's not really an issues yet. If we
+did have to however, we'd have to sort the data frame by age first and then by
+geography to retain the alphabetical ordering of the geography collumn.
 
 Now we still have quite a few tasks ahead of us. We should always check our
 data before use (even before exploratory analysis) for any surpises or
@@ -149,13 +152,153 @@ This should be quite a simple task, since we've converted the population values
 to numbers, we find the total population size for each geography by summing
 over each age catagory for each year. Lets demonstrate what we mean:
 
-```{r}
+```{r filtering by sex}
 
+# Only take the rows where the sex is "All"
+total_by_geog = cleaned_data[cleaned_data$Sex == 'All', ]
 
+head(total_by_geog, 10)
 
+```
+
+So now we have only information about all people in each age category
+per geography, and since we know there are 91 catagories in age (0 to 90) we
+can simply make a new frame which contains the sum of all ages per geography.
+
+```{r total population per geography}
+
+geography_set = unique(total_by_geog$Geography)
+
+length(geography_set)
+nrow(total_by_geog)
+
+```
+
+Hold on a second... We have 439 unique geographies in our dataset, across
+40040 rows but we have (theoretically) 91 age catagories per geography. This
+is contradictory as:
+
+```{r Simple calculations}
+
+40040/439
+
+```
+
+Implying that there are some geographies in the data set which have more than
+91 age catagories!!?? Lets try to find how many age catagories each geography
+has and single out a culprit.
+
+```{r finding ages in geographies}
+
+# Iterate through all geographies
+for (i in 1:length(geography_set)) {
+    
+    # Find how many rows with that geography name occur
+    suspect = geography_set[i]
+    num_catagories = length(which(total_by_geog$Geography == suspect))
+    
+    # Single it out, report it
+    culprits = c()
+    if (num_catagories > 91) {
+        cat(paste(suspect, "has", num_catagories, "catagories", sep = " "))
+        culprits = c(culprits, suspect)
+    }
+    
+}
 
 
 ```
+
+So whats actually going on with West Midlands?
+
+```{r Whats up with WM}
+
+head(total_by_geog[total_by_geog$Geography == "West Midlands", ], 10)
+
+```
+
+So its repeated! Typical british naming conventions, no consistency, no pattern, 
+no sense. We couldve kept (or reintroduce) the geography codes to help us split
+these and rename them, but we dont need to as its clear that it alternates
+between West Midlands 1 and West Midlands 2. 
+
+Lets fix this:
+
+```{r Fixing the West Midlands}
+
+# Indexes for all "west midlands"" rows 
+west_mid_indexes = c(which(total_by_geog$Geography == "West Midlands"))
+
+# Assign them new names in an alternating pattern
+for (i in west_mid_indexes) {
+    
+    if (i %% 2 == 1) {
+        total_by_geog[i, 1] = "West Midlands 1"
+    } else {
+        total_by_geog[i, 1] = "West Midlands 2"
+    }
+    
+}
+
+total_by_geog[west_mid_indexes[1:10], ]
+
+
+```
+
+Finally, now we have a dataset we can use! Lets now do what we set out to do.
+Lets find the toal per geography per year!
+
+```{r total population per geography}
+
+geography_set = unique(total_by_geog$Geography)
+
+population_per_geog = data.frame(Geography = geography_set,
+                                 total_2013 = c(rep(0, length(geography_set))),
+                                 total_2014 = c(rep(0, length(geography_set))),
+                                 total_2015 = c(rep(0, length(geography_set))),
+                                 total_2016 = c(rep(0, length(geography_set)))
+                                )
+
+population_per_geog[1, 2] = sum(total_by_geog[1:91 , 4])
+population_per_geog
+
+```
+
+```
+for (i in length(geography_set)) {
+    
+    start_index = 91*(i-1) + 1
+    end_index = 91*i
+    
+    population_per_geog[i, 2] = sum(total_by_geog[start_index:end_index , 4])
+    population_per_geog[i, 3] = sum(total_by_geog[start_index:end_index , 5])
+    population_per_geog[i, 4] = sum(total_by_geog[start_index:end_index , 6])
+    population_per_geog[i, 5] = sum(total_by_geog[start_index:end_index , 7])
+    
+}
+
+population_per_geog
+
+```
+
+```{r}
+for (i in length(geography_set)) {
+    
+    start_index = 91*(i-1) + 1
+    end_index = 91*i
+    print(start_index)
+    print(end_index)
+    population_per_geog[geography_set[i], 2:5] = rowSums(total_by_geog[start_index:end_index , 4:7])
+    
+}
+
+population_per_geog
+
+```
+
+
+
+
 
 
 
