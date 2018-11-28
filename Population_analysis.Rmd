@@ -1,7 +1,9 @@
 ---
 author: "Hitesh Kumar"
 date: "3 November 2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -36,9 +38,9 @@ library(dplyr)
 #### Summary:
 * The collumn names weren't very freindly, so we gave them more meaningful
 names
-* Everything was stored as strings, not useful for dealing with numberslike age
+* Everything was stored as strings, not useful for dealing with numbers like age
 or population size, we converted the collumn data types as appropriate
-* Age is catagorical here, and one of the catagories, "90+" wasnt very freindly
+* Age is categorical here, and one of the catagories, "90+" wasn't very friendly
 so we replaced it by "90" and it means the same thing to us
 * Geography code is most likely useless for us, and so isn't needed.
 * I present some solutions to more minor problems at the end
@@ -82,7 +84,7 @@ and population sizes in each year to numbers.
 One issue is that the Age catagory has an entry of "90+" which would result
 in NULL values when forced to numeric (as.numeric() is very smart when
 converting factors to numbers, but not that smart) . To counter this, we can
-rename the 90+ catagory to just 90. This would preserve the information (as we
+rename the 90+ category to just 90. This would preserve the information (as we
 know now that the number 90 will mean all ages 90 and above) and make things
 easy to work with. Converting age to a double as opposed to 8 bit int isnt too
 important as performance isnt an issue yet.
@@ -116,18 +118,18 @@ tail(cleaned_data, 10)
 ```
 
 Ok, so finally it seems we have a nice looking dataset. We could still sort the
-ages into ascending order by numbers, but it's not really an issues yet. If we
+ages into ascending order by numbers, but it's not really an issue yet. If we
 did have to however, we'd have to sort the data frame by age first and then by
 geography to retain the alphabetical ordering of the geography collumn.
 
 Now we still have quite a few tasks ahead of us. We should always check our
-data before use (even before exploratory analysis) for any surpises or
+data before use (even before exploratory analysis) for any surprises or
 inconsistencies etc. The checks we might want to do here are:
 
-* Is there always a one to one mapping between geography and its code? **(Can check this by creating a hash map or dictionary and looking for any multiple values to any keys)**
-* If not, does this mean that the Geography codes are neccessary or useless? **(Probabaly useless)**
-* Does every geography have data for all age catagories? (integers from 0 to 90) **(Again, can create a hash map and compare values to each key against expectations)**
-* Are there any missing entries **(Can create a heat map of the data frame by index and look for any 0's)**
+* Is there always a one to one mapping between geography and its code? **(Can check this by creating a hash map or dictionary and looking for any multiple values to any keys?)**
+* If not, does this mean that the Geography codes are neccessary or useless? **(Probabaly useless?)**
+* Does every geography have data for all age catagories? (integers from 0 to 90) **(Again, can create a hash map and compare values to each key against expectations?)**
+* Are there any missing entries **(Can create a heat map of the data frame by index and look for any 0's?)**
 
 But in this situation, its quite reasonable to assume that none of these
 extreme cases will be realised here. Lets finally get rid of the geography code
@@ -143,14 +145,16 @@ cleaned_data = cleaned_data[ , -2]
 
 #### Summary:
 * The smallest total population belonged to:
-  * 2013:
-  * 2014:
-  * 2015:
-  * 2016:
+  * 2013: Isles of Scilly, 2251
+  * 2014: Isles of Scilly, 2280
+  * 2015: Isles of Scilly, 2324
+  * 2016: Isles of Scilly, 2308
+* There was an issue with a geography being duplicated, fixed it by finding it and reanming it
+* Finding the sum was quite easy since we know that each geography now has 91 age catagories exactly
 
 This should be quite a simple task, since we've converted the population values
 to numbers, we find the total population size for each geography by summing
-over each age catagory for each year. Lets demonstrate what we mean:
+over each age category for each year. Lets demonstrate what we mean:
 
 ```{r filtering by sex}
 
@@ -165,7 +169,7 @@ So now we have only information about all people in each age category
 per geography, and since we know there are 91 catagories in age (0 to 90) we
 can simply make a new frame which contains the sum of all ages per geography.
 
-```{r total population per geography}
+```{r something strange}
 
 geography_set = unique(total_by_geog$Geography)
 
@@ -233,9 +237,9 @@ west_mid_indexes = c(which(total_by_geog$Geography == "West Midlands"))
 for (i in west_mid_indexes) {
     
     if (i %% 2 == 1) {
-        total_by_geog[i, 1] = "West Midlands 1"
+        total_by_geog$Geography[i] = "West Midlands 1"
     } else {
-        total_by_geog[i, 1] = "West Midlands 2"
+        total_by_geog$Geography[i] = "West Midlands 2"
     }
     
 }
@@ -250,26 +254,25 @@ Lets find the toal per geography per year!
 
 ```{r total population per geography}
 
+# New set of unique geographies
 geography_set = unique(total_by_geog$Geography)
 
+num_geographies = length(geography_set)
 population_per_geog = data.frame(Geography = geography_set,
-                                 total_2013 = c(rep(0, length(geography_set))),
-                                 total_2014 = c(rep(0, length(geography_set))),
-                                 total_2015 = c(rep(0, length(geography_set))),
-                                 total_2016 = c(rep(0, length(geography_set)))
-                                )
+                                 total_2013 = c(rep(0, num_geographies)),
+                                 total_2014 = c(rep(0, num_geographies)),
+                                 total_2015 = c(rep(0, num_geographies)),
+                                 total_2016 = c(rep(0, num_geographies))
+                                 )
 
-population_per_geog[1, 2] = sum(total_by_geog[1:91 , 4])
-population_per_geog
-
-```
-
-```
-for (i in length(geography_set)) {
+# Loop through each geography
+for (i in 1:length(geography_set)) {
     
+    # Start and end indexes for each geography in cleaned data
     start_index = 91*(i-1) + 1
     end_index = 91*i
     
+    # Find the sums of all age catagories per geography
     population_per_geog[i, 2] = sum(total_by_geog[start_index:end_index , 4])
     population_per_geog[i, 3] = sum(total_by_geog[start_index:end_index , 5])
     population_per_geog[i, 4] = sum(total_by_geog[start_index:end_index , 6])
@@ -277,29 +280,381 @@ for (i in length(geography_set)) {
     
 }
 
-population_per_geog
+head(population_per_geog, 10)
 
 ```
 
-```{r}
-for (i in length(geography_set)) {
+And finally we can find the minimum values per year and where they occur.
+
+```{r min populations per year}
+
+# Since its only four years, we dont need a loop or anything more complicated
+population_per_geog[which.min(population_per_geog$total_2013), ]
+population_per_geog[which.min(population_per_geog$total_2014), ]
+population_per_geog[which.min(population_per_geog$total_2015), ]
+population_per_geog[which.min(population_per_geog$total_2016), ]
+
+```
+
+Interesting, but not surprising.
+
+## Question 3
+
+#### Summary:
+* The greatest female to male ratio belonged to: Knowsley at 1.103591
+* The lowest female to male ratio belonged to: London at 0.8084654
+* There was an issue with a geography being duplicated, fixed it by finding it and reanming it
+* We defined change in two different ways and saw very different results
+
+Here our task is arguably simpler than the previous one. One way to proceed is
+to create a new data frame by dividing the female labelled rows by the male
+labelled rows, and then use that as a dataset for all of our later analysis in
+this question. 
+
+As with the totals we used before, we also need to rename the west midlands
+rows for each of the female and male datasets. 
+
+And by the way, I know I could create a function for renaming the alternating
+geographies, but this isnt Python and I'm sure that I wont need this code
+chunk ever again, so lets just copy and paste...
+
+Lets go:
+
+```{r creating a ratio dataset}
+
+# Find and seperate the rows labelled female and male by sex
+females_by_geog = cleaned_data[cleaned_data$Sex == 'Female', ]
+males_by_geog = cleaned_data[cleaned_data$Sex == 'Male', ]
+
+# Indexes for all "west midlands"" rows (same between all, female and male sets)
+west_mid_indexes = c(which(females_by_geog$Geography == "West Midlands"))
+
+# Assign them new names in an alternating pattern
+for (i in west_mid_indexes) {
     
-    start_index = 91*(i-1) + 1
-    end_index = 91*i
-    print(start_index)
-    print(end_index)
-    population_per_geog[geography_set[i], 2:5] = rowSums(total_by_geog[start_index:end_index , 4:7])
+    if (i %% 2 == 1) {
+        females_by_geog$Geography[i] = "West Midlands 1"
+        males_by_geog$Geography[i] = "West Midlands 1"
+    } else {
+        females_by_geog$Geography[i] = "West Midlands 2"
+        males_by_geog$Geography[i] = "West Midlands 2"
+    }
     
 }
 
-population_per_geog
+females_by_geog[west_mid_indexes[1:10], ]
+males_by_geog[west_mid_indexes[1:10], ]
 
 ```
 
+To find the totals, its the same process as before pretty much, but we should
+note that since the female and male datasets are pretty much identical by the
+first collumn, many calculations and sortings only have to be done once for
+one of the datasets and can be used for both.
+
+```{r finding all of each}
+
+# New set of unique geographies
+geography_set = unique(females_by_geog$Geography)
+
+num_geographies = length(geography_set)
+total_fem_per_geog = data.frame(Geography = geography_set,
+                                total_2013 = c(rep(0, num_geographies)),
+                                total_2014 = c(rep(0, num_geographies)),
+                                total_2015 = c(rep(0, num_geographies)),
+                                total_2016 = c(rep(0, num_geographies))
+                                )
+total_male_per_geog = data.frame(Geography = geography_set,
+                                 total_2013 = c(rep(0, num_geographies)),
+                                 total_2014 = c(rep(0, num_geographies)),
+                                 total_2015 = c(rep(0, num_geographies)),
+                                 total_2016 = c(rep(0, num_geographies))
+                                 )
+
+# Loop through each geography
+for (i in 1:length(geography_set)) {
+    
+    # Start and end indexes for each geography in cleaned data
+    start_index = 91*(i-1) + 1
+    end_index = 91*i
+    
+    # Find the sums of all females of all age catagories per geography
+    total_fem_per_geog[i, 2] = sum(females_by_geog[start_index:end_index , 4])
+    total_fem_per_geog[i, 3] = sum(females_by_geog[start_index:end_index , 5])
+    total_fem_per_geog[i, 4] = sum(females_by_geog[start_index:end_index , 6])
+    total_fem_per_geog[i, 5] = sum(females_by_geog[start_index:end_index , 7])
+    
+    # Find the sums of all males of all age catagories per geography
+    total_male_per_geog[i, 2] = sum(males_by_geog[start_index:end_index , 4])
+    total_male_per_geog[i, 3] = sum(males_by_geog[start_index:end_index , 5])
+    total_male_per_geog[i, 4] = sum(males_by_geog[start_index:end_index , 6])
+    total_male_per_geog[i, 5] = sum(males_by_geog[start_index:end_index , 7])
+    
+}
+
+head(total_fem_per_geog, 10)
+head(total_male_per_geog, 10)
+
+```
+
+Now we have data frames for almost exactly what we want, all thats left is to
+effectivley divide the female dataset by the male dataset.
+
+```{r division}
+
+ratios_per_geog = total_fem_per_geog
+colnames(ratios_per_geog) = c("Geography", "Ratios_2013", "Ratios_2014",
+                              "Ratios_2015", "Ratios_2016")
+ratios_per_geog[ , 2:5] = total_fem_per_geog[ , 2:5]/total_male_per_geog[ , 2:5]
+
+head(ratios_per_geog, 10)
+
+```
+
+```{r extreme female to male ratio}
+
+ratios_per_geog[which.max(ratios_per_geog$Ratios_2013), 1:2]
+# I was curious...
+ratios_per_geog[which.min(ratios_per_geog$Ratios_2013), 1:2]
+
+# Just checking to make sure that you aren't lying to me...
+ratios_per_geog[ratios_per_geog$Geography == "Fylde", 5]
 
 
+```
+
+And here are our answers!
+
+Now when we talk about change the most obvious method to discuss it would be to
+calculate the absolute difference between the 2016 and 2013 ratios, but we
+should stop and think: is that really what change means? Suppose that for one
+geography, the ratio in 2016 was 1.2 and in 2013 was 0.9, growing by 0.1 each 
+year. This could mean a change of 0.3 and we could call this the largest 
+change. But what if another geography went from 0.9 to 0.4 then to 1.8 down 
+to 1.2? The change here would be (by the previous definition) 0.3, but clearly
+between 2013 and 2016, this geography has experienced much more change! 
+
+For this reason, we will define two types of changes. One will of course be
+the absolute difference between the value at 2016 and 2013, wheras the other
+will be the sum of absolute differences between the values at each year in
+between and including 2013 and 2016. 
+
+For the simple method, lets just create a frame which records the absolute
+value of the differences between the 2013 and 2016 collumns
+
+```{r simple change}
+
+abs_change_per_geog = ratios_per_geog[ , 1:2]
+colnames(abs_change_per_geog) = c("Geography", "Change_2013")
+
+# Simple elementwise subtraction and absolute value
+abs_change_per_geog[ , 2] = abs(ratios_per_geog[ , 5] - ratios_per_geog[ , 2])
+
+abs_change_per_geog[which.max(abs_change_per_geog$Change_2013), ]
+abs_change_per_geog[which.min(abs_change_per_geog$Change_2013), ]
+
+```
+
+```{r cumulative change}
+
+cum_change_per_geog = ratios_per_geog[ , 1:4]
+colnames(cum_change_per_geog) = c("Geography", "2013->2014",
+                                  "2014->2015", "2015->2016")
+
+# Simple elementwise subtraction and absolute value
+cum_change_per_geog[ , 2:4] = abs(ratios_per_geog[ , 3:5] - ratios_per_geog[ , 2:4])
+
+total_cum_change = ratios_per_geog[ , 1:2]
+colnames(total_cum_change) = c("Geography", "Abs_cumulative_change")
+
+# Sum up all the changes over the years
+total_cum_change[ , 2] = rowSums(cum_change_per_geog[ , 2:4])
+
+total_cum_change[which.max(total_cum_change$Abs_cumulative_change), ]
+total_cum_change[which.min(total_cum_change$Abs_cumulative_change), ]
+
+```
+
+So is seems belfast has seen the most changes over the years to its ratio, and
+Suffolk has had the least. This is a much more interesting view of the change,
+now we can investigate belfast and find out whats causing this rather extreme
+change! Infact, we could have been smarter and seen what direction it changes
+in (more males or females overall etc.)
+
+## Question 4
+
+#### Summary:
+* Plotting the graph was quite helpful, some interesting analysis was made
+* We used both or definitions for change to discuss the over-65 population
+* We found a potential sneaky plot against us
+
+Lets go and start making some plots. We already have some data frames from
+before that we can reuse, and from these we can quite easily find the total
+population by age for each sex. After that, its as simple as a 2 day long
+war with ggplot to force it to submit to you.
+
+```{r Plotting Age distribution}
+
+females_by_age = females_by_geog[ , c(2, 7)]
+males_by_age = males_by_geog[ , c(2, 7)]
+
+age_dist = data_frame(Ages = c(0:90),
+                      Total_females = c(rep(0, 91)),
+                      Total_males = c(rep(0, 91)))
+
+# Finding sums of all age categories
+for (age in 0:90) {
+    
+    age_dist[age+1, 2] = colSums(females_by_age[females_by_age$Age == age, 2])
+    age_dist[age+1, 3] = colSums(males_by_age[males_by_age$Age == age, 2])
+    
+}
+
+# Some fancy but annoying ggplotting
+ggplot(age_dist) +
+    geom_line(aes(x = age_dist$Ages, y = age_dist$Total_females, color = "Female"), size = 1) +
+    geom_line(aes(x = age_dist$Ages, y = age_dist$Total_males, color = "Male"), size = 1) +
+    scale_color_manual(values=c("Female"="blue", "Male"="red")) +
+    theme_bw() +
+    scale_y_continuous(breaks = seq(0, 1.1*max(age_dist[ , 2:3]), 5*(10^5))) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          axis.line = element_line(colour = "black", size = 1.5)) + 
+    xlab("Age") +
+    ylab("Population size") + 
+    ggtitle("Population in 2016 based on Age")
+
+```
+
+So here we see some interesting things. It seems like initially, the number of
+males is signinficantly higher than females, and it seems to stay that way
+quite consistently until about the age of 28. The higher birth rate of male
+children is indeed strange as outside of wartime, youd assume it's pretty much
+50/50.
+
+The decrease in the number of males in the "middle-age" bracket could be due
+to the higher death rates for men due to not only the terrifying male suicide
+rate this country has, but also possibly men having greater risks of
+contracting or dying to terminal ilnesses or conditions. It may even have to
+do with the professions that some men work in being more dangerous, and the
+risk of death before retirement being greater. 
+
+This trend seems to continue later too, as men also have a lower life
+expectancy than women, and so its very normal to see that the number of males
+heavily decreases compared to females in the late 80's and 90s.
+
+The spike we see at the end of the graph is of course due to the date grouping
+all 90+ year olds into one category. 
+
+Now to look at the proportions of over 65's in each geography. For the first
+part, we will look at any particular spikes or dips over any of the 4 years. 
+
+```{r Finding over 65s}
+
+over65s_by_geog = ratios_per_geog[ , ]
+colnames(over65s_by_geog) = c("Geography", "2013", "2014", "2015", "2016")
+
+# Finding sums of all age categories
+for (geography in geography_set) {
+    
+    temp_frame = total_by_geog[(total_by_geog$Geography == geography), ]
+    over65s_by_geog[over65s_by_geog$Geography == geography, 2:5] = colSums(temp_frame[temp_frame$Age >= 65, 4:7])
+}
+
+# Dividing be total population to find proportions
+over65s_by_geog[2:5] = over65s_by_geog[2:5] / population_per_geog[2:5]
+head(over65s_by_geog, 10)
+
+```
+
+Now lets find the extreme values:
+
+```{r extreme over 65s!}
+
+# Maximums
+over65s_by_geog[which.max(over65s_by_geog[ , 2]), c(1,2)]
+over65s_by_geog[which.max(over65s_by_geog[ , 3]), c(1,3)]
+over65s_by_geog[which.max(over65s_by_geog[ , 4]), c(1,4)]
+over65s_by_geog[which.max(over65s_by_geog[ , 5]), c(1,5)]
+
+# Minimums
+over65s_by_geog[which.min(over65s_by_geog[ , 2]), c(1,2)]
+over65s_by_geog[which.min(over65s_by_geog[ , 3]), c(1,3)]
+over65s_by_geog[which.min(over65s_by_geog[ , 4]), c(1,4)]
+over65s_by_geog[which.min(over65s_by_geog[ , 5]), c(1,5)]
 
 
+```
+
+Once again, we something that is incredibly interesting. For all 4 years, 
+West somerset has consistently had around 1/3 of its population at over 65
+years of age, and Tower Hamlets has had under 7% of the same age group! What is
+it about these places that draws or repels certain age groups? Not too
+surprising once you actually visit tower hamlets though, and I can imagine the
+same for West somerset...
+
+Now finally to calculate the cahnges over time, and once again we will use both
+of our definitions for this:
+
+```{r simple changes - over65s}
+
+over65s_simple_change = over65s_by_geog[ , 1:2]
+colnames(over65s_simple_change) = c("Geography", "Change")
+
+over65s_simple_change[ , 2] = abs(over65s_by_geog[ , 5] - over65s_by_geog[ , 2])
+
+over65s_simple_change[which.max(over65s_simple_change[ , 2]) , ]
+over65s_simple_change[which.min(over65s_simple_change[ , 2]) , ]
+
+```
+
+It seems that looking at the net loss from 2016 to 2013 reveals that the
+proportion of over 65s in Dumfries and Galloway changed by a significant amount,
+Wheras it seems Bath and NE Somerset has stayed pretty much the same.
+
+Finally, the cumulative change over the years:
+
+```{r cumulative changes - over65s}
+
+over65s_cum_changes = over65s_by_geog[ , 1:4]
+colnames(over65s_cum_changes) = c("Geography", "2013->2014",
+                                    "2014->2015", "2015->2016")
+
+over65s_cum_changes[ , 2:4] = over65s_by_geog[ , 3:5] - over65s_by_geog[ , 2:4]
+
+over65s_net_change = over65s_by_geog[ , 1:2]
+colnames(over65s_simple_change) = c("Geography", "net_change")
+
+over65s_net_change[ , 2] = rowSums(over65s_cum_changes[ , 2:4])
+
+over65s_net_change[which.max(over65s_net_change[ , 2]) , ]
+over65s_net_change[which.min(over65s_net_change[ , 2]) , ]
+
+```
+
+Once again, Dumfries and Galloway takes the lead as the most dynamic and
+fast-moving scene for over 65's, and now we see Cardiff over the years has
+actually either not changed much or has averaged out to a small loss in the
+over 65's
+
+### This concludes the report.
+
+Oh wait, dont think I missed this. Thought you could fool me?
+
+```{r sneaky}
+
+population_per_geog[which.max(population_per_geog$total_2013), ]
+
+```
+
+Well so far it doesnt seem to have affected any of our results adversely. Even
+when summing results or comparing, the constant addition from this geography
+would've refelected the proportions we have been dealing with in a consistent
+way. By this I mean that the effects on the totals or ratios that this
+geography has had has been equivalent for all age groups of Sexes over all the
+comparisons. This shoudlnt be a problem, even for the other geographies like
+"Great Britain", "England and wales", "England", "Wales" and so on.
 
 
 

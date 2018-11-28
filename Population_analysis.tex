@@ -1,0 +1,1401 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfauthor={Hitesh Kumar},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{Hitesh Kumar}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{3 November 2018}
+
+
+\begin{document}
+
+\section{Where is my age? - population dataset
+analysis}\label{where-is-my-age---population-dataset-analysis}
+
+\paragraph{\texorpdfstring{``I was hoping to do this in Python, but
+honestly it's much more appropriate to do this in R.'' -
+me}{I was hoping to do this in Python, but honestly it's much more appropriate to do this in R. - me}}\label{i-was-hoping-to-do-this-in-python-but-honestly-its-much-more-appropriate-to-do-this-in-r.---me}
+
+Here we take a look at a relatively small dataset with information about
+the population sizes across various locations throughout the UK and
+across various ages.
+
+In this short project, we will stick to the Question and Answer format
+given, but might take some detours along the way.
+
+\subsubsection{\texorpdfstring{\textbf{I've summarised my answers in
+bullet points at the start of each
+question}}{I've summarised my answers in bullet points at the start of each question}}\label{ive-summarised-my-answers-in-bullet-points-at-the-start-of-each-question}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Expect some function clashes, not important though}
+\KeywordTok{library}\NormalTok{(readxl)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\subsection{Question 1}\label{question-1}
+
+\paragraph{Summary:}\label{summary}
+
+\begin{itemize}
+\tightlist
+\item
+  The collumn names weren't very freindly, so we gave them more
+  meaningful names
+\item
+  Everything was stored as strings, not useful for dealing with numbers
+  like age or population size, we converted the collumn data types as
+  appropriate
+\item
+  Age is categorical here, and one of the catagories, ``90+'' wasn't
+  very friendly so we replaced it by ``90'' and it means the same thing
+  to us
+\item
+  Geography code is most likely useless for us, and so isn't needed.
+\item
+  I present some solutions to more minor problems at the end
+\end{itemize}
+
+Lets see what we are dealing with.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{raw_import_data =}\StringTok{ }\KeywordTok{read_excel}\NormalTok{(}\StringTok{"population.xlsx"}\NormalTok{, }\DataTypeTok{sheet =} \StringTok{"Dataset"}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(raw_import_data, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##    Title   `Population Estimates for ~ X__1  X__2  X__3  X__4  X__5  X__6 
+##    <chr>   <chr>                       <chr> <chr> <chr> <chr> <chr> <chr>
+##  1 <NA>    <NA>                        <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+##  2 Geogra~ Geography code              Age   Sex   2013  2014  2015  2016 
+##  3 Aberde~ S12000033                   0     All   2529~ 2560~ 2518~ 2533~
+##  4 Aberde~ S12000033                   0     Fema~ 1227~ 1247~ 1219~ 1238~
+##  5 Aberde~ S12000033                   0     Male  1302~ 1313~ 1299~ 1295~
+##  6 Aberde~ S12000033                   1     All   2589~ 2466~ 2493~ 2454~
+##  7 Aberde~ S12000033                   1     Fema~ 1281~ 1203~ 1216~ 1200~
+##  8 Aberde~ S12000033                   1     Male  1308~ 1263~ 1277~ 1254~
+##  9 Aberde~ S12000033                   10    All   1760~ 1777~ 1908~ 1945~
+## 10 Aberde~ S12000033                   10    Fema~ 851.0 886.0 929.0 966.0
+\end{verbatim}
+
+This dosent look very good. lets try to clean it up in place with some
+more helpful collumn names and less clutter. We'll rename the collumns
+with the orignal names (mistakenly put into the actual frame by the
+readxl function) and remove the first two rows (empty row and names).
+
+(We're only working with one dataset here, we know the context so lets
+just call it ``xxxxx\_data'')
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Always keep raw data away from any edits}
+\NormalTok{cleaned_data =}\StringTok{  }\NormalTok{raw_import_data}
+
+\CommentTok{# Rename collumns with information from second row, remove useless rows}
+\KeywordTok{colnames}\NormalTok{(cleaned_data) =}\StringTok{ }\KeywordTok{c}\NormalTok{(cleaned_data[}\DecValTok{2}\NormalTok{, ])}
+\NormalTok{cleaned_data =}\StringTok{ }\NormalTok{cleaned_data[}\OperatorTok{-}\DecValTok{1}\OperatorTok{:-}\DecValTok{2}\NormalTok{, ]}
+
+\KeywordTok{head}\NormalTok{(cleaned_data, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##    Geography     `Geography code` Age   Sex    `2013` `2014` `2015` `2016`
+##    <chr>         <chr>            <chr> <chr>  <chr>  <chr>  <chr>  <chr> 
+##  1 Aberdeen City S12000033        0     All    2529.0 2560.0 2518.0 2533.0
+##  2 Aberdeen City S12000033        0     Female 1227.0 1247.0 1219.0 1238.0
+##  3 Aberdeen City S12000033        0     Male   1302.0 1313.0 1299.0 1295.0
+##  4 Aberdeen City S12000033        1     All    2589.0 2466.0 2493.0 2454.0
+##  5 Aberdeen City S12000033        1     Female 1281.0 1203.0 1216.0 1200.0
+##  6 Aberdeen City S12000033        1     Male   1308.0 1263.0 1277.0 1254.0
+##  7 Aberdeen City S12000033        10    All    1760.0 1777.0 1908.0 1945.0
+##  8 Aberdeen City S12000033        10    Female 851.0  886.0  929.0  966.0 
+##  9 Aberdeen City S12000033        10    Male   909.0  891.0  979.0  979.0 
+## 10 Aberdeen City S12000033        11    All    1759.0 1742.0 1781.0 1889.0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{tail}\NormalTok{(cleaned_data, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##    Geography     `Geography code` Age   Sex    `2013` `2014` `2015` `2016`
+##    <chr>         <chr>            <chr> <chr>  <chr>  <chr>  <chr>  <chr> 
+##  1 Yorkshire an~ E12000003        88    Male   4622.0 4817.0 4956.0 4961.0
+##  2 Yorkshire an~ E12000003        89    All    11496~ 11509~ 11834~ 11915~
+##  3 Yorkshire an~ E12000003        89    Female 7613.0 7562.0 7761.0 7716.0
+##  4 Yorkshire an~ E12000003        89    Male   3883.0 3947.0 4073.0 4199.0
+##  5 Yorkshire an~ E12000003        9     All    59887~ 61377~ 64248~ 65126~
+##  6 Yorkshire an~ E12000003        9     Female 29319~ 30282~ 31461~ 31880~
+##  7 Yorkshire an~ E12000003        9     Male   30568~ 31095~ 32787~ 33246~
+##  8 Yorkshire an~ E12000003        90+   All    41844~ 43799~ 43821~ 44963~
+##  9 Yorkshire an~ E12000003        90+   Female 30244~ 31337~ 31006~ 31657~
+## 10 Yorkshire an~ E12000003        90+   Male   11600~ 12462~ 12815~ 13306~
+\end{verbatim}
+
+Additionally, we should make sure the data types of the values in the
+data frame are appropriate. It seems that everything is stored as
+strings within the frame. This also explains why 9 comes after 89 here!
+So lets convert age and population sizes in each year to numbers.
+
+One issue is that the Age catagory has an entry of ``90+'' which would
+result in NULL values when forced to numeric (as.numeric() is very smart
+when converting factors to numbers, but not that smart) . To counter
+this, we can rename the 90+ category to just 90. This would preserve the
+information (as we know now that the number 90 will mean all ages 90 and
+above) and make things easy to work with. Converting age to a double as
+opposed to 8 bit int isnt too important as performance isnt an issue
+yet.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Replace all instances of '90' string with '90'}
+\NormalTok{cleaned_data}\OperatorTok{$}\NormalTok{Age[cleaned_data}\OperatorTok{$}\NormalTok{Age }\OperatorTok{==}\StringTok{ '90+'}\NormalTok{] =}\StringTok{ '90'}
+\NormalTok{cleaned_data}\OperatorTok{$}\NormalTok{Age =}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(cleaned_data}\OperatorTok{$}\NormalTok{Age)}
+
+\KeywordTok{head}\NormalTok{(cleaned_data, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##    Geography     `Geography code`   Age Sex    `2013` `2014` `2015` `2016`
+##    <chr>         <chr>            <dbl> <chr>  <chr>  <chr>  <chr>  <chr> 
+##  1 Aberdeen City S12000033            0 All    2529.0 2560.0 2518.0 2533.0
+##  2 Aberdeen City S12000033            0 Female 1227.0 1247.0 1219.0 1238.0
+##  3 Aberdeen City S12000033            0 Male   1302.0 1313.0 1299.0 1295.0
+##  4 Aberdeen City S12000033            1 All    2589.0 2466.0 2493.0 2454.0
+##  5 Aberdeen City S12000033            1 Female 1281.0 1203.0 1216.0 1200.0
+##  6 Aberdeen City S12000033            1 Male   1308.0 1263.0 1277.0 1254.0
+##  7 Aberdeen City S12000033           10 All    1760.0 1777.0 1908.0 1945.0
+##  8 Aberdeen City S12000033           10 Female 851.0  886.0  929.0  966.0 
+##  9 Aberdeen City S12000033           10 Male   909.0  891.0  979.0  979.0 
+## 10 Aberdeen City S12000033           11 All    1759.0 1742.0 1781.0 1889.0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{tail}\NormalTok{(cleaned_data, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##    Geography     `Geography code`   Age Sex    `2013` `2014` `2015` `2016`
+##    <chr>         <chr>            <dbl> <chr>  <chr>  <chr>  <chr>  <chr> 
+##  1 Yorkshire an~ E12000003           88 Male   4622.0 4817.0 4956.0 4961.0
+##  2 Yorkshire an~ E12000003           89 All    11496~ 11509~ 11834~ 11915~
+##  3 Yorkshire an~ E12000003           89 Female 7613.0 7562.0 7761.0 7716.0
+##  4 Yorkshire an~ E12000003           89 Male   3883.0 3947.0 4073.0 4199.0
+##  5 Yorkshire an~ E12000003            9 All    59887~ 61377~ 64248~ 65126~
+##  6 Yorkshire an~ E12000003            9 Female 29319~ 30282~ 31461~ 31880~
+##  7 Yorkshire an~ E12000003            9 Male   30568~ 31095~ 32787~ 33246~
+##  8 Yorkshire an~ E12000003           90 All    41844~ 43799~ 43821~ 44963~
+##  9 Yorkshire an~ E12000003           90 Female 30244~ 31337~ 31006~ 31657~
+## 10 Yorkshire an~ E12000003           90 Male   11600~ 12462~ 12815~ 13306~
+\end{verbatim}
+
+We should be aware that the boolean mask we are using to replace the
+values in the data frame is a very ineffeicient method and is only
+really acceptable for small datasets like this. For larger data sets, we
+would have to explore other ways of finding values and assigning them to
+a set of data, such as converting to a matrix, or even using external
+software.
+
+Lets fix the other collumns too now:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Convert all year collumns}
+\NormalTok{cleaned_data[ , }\DecValTok{5}\OperatorTok{:}\DecValTok{8}\NormalTok{] =}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{unlist}\NormalTok{(cleaned_data[ , }\DecValTok{5}\OperatorTok{:}\DecValTok{8}\NormalTok{]))}
+
+\KeywordTok{tail}\NormalTok{(cleaned_data, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##    Geography      `Geography code`   Age Sex   `2013` `2014` `2015` `2016`
+##    <chr>          <chr>            <dbl> <chr>  <dbl>  <dbl>  <dbl>  <dbl>
+##  1 Yorkshire and~ E12000003           88 Male    4622   4817   4956   4961
+##  2 Yorkshire and~ E12000003           89 All    11496  11509  11834  11915
+##  3 Yorkshire and~ E12000003           89 Fema~   7613   7562   7761   7716
+##  4 Yorkshire and~ E12000003           89 Male    3883   3947   4073   4199
+##  5 Yorkshire and~ E12000003            9 All    59887  61377  64248  65126
+##  6 Yorkshire and~ E12000003            9 Fema~  29319  30282  31461  31880
+##  7 Yorkshire and~ E12000003            9 Male   30568  31095  32787  33246
+##  8 Yorkshire and~ E12000003           90 All    41844  43799  43821  44963
+##  9 Yorkshire and~ E12000003           90 Fema~  30244  31337  31006  31657
+## 10 Yorkshire and~ E12000003           90 Male   11600  12462  12815  13306
+\end{verbatim}
+
+Ok, so finally it seems we have a nice looking dataset. We could still
+sort the ages into ascending order by numbers, but it's not really an
+issue yet. If we did have to however, we'd have to sort the data frame
+by age first and then by geography to retain the alphabetical ordering
+of the geography collumn.
+
+Now we still have quite a few tasks ahead of us. We should always check
+our data before use (even before exploratory analysis) for any surprises
+or inconsistencies etc. The checks we might want to do here are:
+
+\begin{itemize}
+\tightlist
+\item
+  Is there always a one to one mapping between geography and its code?
+  \textbf{(Can check this by creating a hash map or dictionary and
+  looking for any multiple values to any keys?)}
+\item
+  If not, does this mean that the Geography codes are neccessary or
+  useless? \textbf{(Probabaly useless?)}
+\item
+  Does every geography have data for all age catagories? (integers from
+  0 to 90) \textbf{(Again, can create a hash map and compare values to
+  each key against expectations?)}
+\item
+  Are there any missing entries \textbf{(Can create a heat map of the
+  data frame by index and look for any 0's?)}
+\end{itemize}
+
+But in this situation, its quite reasonable to assume that none of these
+extreme cases will be realised here. Lets finally get rid of the
+geography code collumn
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cleaned_data =}\StringTok{ }\NormalTok{cleaned_data[ , }\OperatorTok{-}\DecValTok{2}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Question 2}\label{question-2}
+
+\paragraph{Summary:}\label{summary-1}
+
+\begin{itemize}
+\tightlist
+\item
+  The smallest total population belonged to:
+\item
+  2013: Isles of Scilly, 2251
+\item
+  2014: Isles of Scilly, 2280
+\item
+  2015: Isles of Scilly, 2324
+\item
+  2016: Isles of Scilly, 2308
+\item
+  There was an issue with a geography being duplicated, fixed it by
+  finding it and reanming it
+\item
+  Finding the sum was quite easy since we know that each geography now
+  has 91 age catagories exactly
+\end{itemize}
+
+This should be quite a simple task, since we've converted the population
+values to numbers, we find the total population size for each geography
+by summing over each age category for each year. Lets demonstrate what
+we mean:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Only take the rows where the sex is "All"}
+\NormalTok{total_by_geog =}\StringTok{ }\NormalTok{cleaned_data[cleaned_data}\OperatorTok{$}\NormalTok{Sex }\OperatorTok{==}\StringTok{ 'All'}\NormalTok{, ]}
+
+\KeywordTok{head}\NormalTok{(total_by_geog, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 7
+##    Geography       Age Sex   `2013` `2014` `2015` `2016`
+##    <chr>         <dbl> <chr>  <dbl>  <dbl>  <dbl>  <dbl>
+##  1 Aberdeen City     0 All     2529   2560   2518   2533
+##  2 Aberdeen City     1 All     2589   2466   2493   2454
+##  3 Aberdeen City    10 All     1760   1777   1908   1945
+##  4 Aberdeen City    11 All     1759   1742   1781   1889
+##  5 Aberdeen City    12 All     1764   1747   1739   1780
+##  6 Aberdeen City    13 All     1877   1769   1744   1733
+##  7 Aberdeen City    14 All     1868   1884   1781   1745
+##  8 Aberdeen City    15 All     1906   1875   1891   1794
+##  9 Aberdeen City    16 All     1988   1922   1897   1893
+## 10 Aberdeen City    17 All     2063   2086   2027   1921
+\end{verbatim}
+
+So now we have only information about all people in each age category
+per geography, and since we know there are 91 catagories in age (0 to
+90) we can simply make a new frame which contains the sum of all ages
+per geography.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{geography_set =}\StringTok{ }\KeywordTok{unique}\NormalTok{(total_by_geog}\OperatorTok{$}\NormalTok{Geography)}
+
+\KeywordTok{length}\NormalTok{(geography_set)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 439
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{nrow}\NormalTok{(total_by_geog)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 40040
+\end{verbatim}
+
+Hold on a second\ldots{} We have 439 unique geographies in our dataset,
+across 40040 rows but we have (theoretically) 91 age catagories per
+geography. This is contradictory as:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{40040}\OperatorTok{/}\DecValTok{439}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 91.20729
+\end{verbatim}
+
+Implying that there are some geographies in the data set which have more
+than 91 age catagories!!?? Lets try to find how many age catagories each
+geography has and single out a culprit.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Iterate through all geographies}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(geography_set)) \{}
+    
+    \CommentTok{# Find how many rows with that geography name occur}
+\NormalTok{    suspect =}\StringTok{ }\NormalTok{geography_set[i]}
+\NormalTok{    num_catagories =}\StringTok{ }\KeywordTok{length}\NormalTok{(}\KeywordTok{which}\NormalTok{(total_by_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ }\NormalTok{suspect))}
+    
+    \CommentTok{# Single it out, report it}
+\NormalTok{    culprits =}\StringTok{ }\KeywordTok{c}\NormalTok{()}
+    \ControlFlowTok{if}\NormalTok{ (num_catagories }\OperatorTok{>}\StringTok{ }\DecValTok{91}\NormalTok{) \{}
+        \KeywordTok{cat}\NormalTok{(}\KeywordTok{paste}\NormalTok{(suspect, }\StringTok{"has"}\NormalTok{, num_catagories, }\StringTok{"catagories"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{" "}\NormalTok{))}
+\NormalTok{        culprits =}\StringTok{ }\KeywordTok{c}\NormalTok{(culprits, suspect)}
+\NormalTok{    \}}
+    
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## West Midlands has 182 catagories
+\end{verbatim}
+
+So whats actually going on with West Midlands?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(total_by_geog[total_by_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ "West Midlands"}\NormalTok{, ], }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 7
+##    Geography       Age Sex   `2013` `2014` `2015` `2016`
+##    <chr>         <dbl> <chr>  <dbl>  <dbl>  <dbl>  <dbl>
+##  1 West Midlands     0 All    40614  39950  39392  39911
+##  2 West Midlands     0 All    72581  70964  69951  70974
+##  3 West Midlands     1 All    41573  40740  40106  39652
+##  4 West Midlands     1 All    74395  73210  71703  70807
+##  5 West Midlands    10 All    64238  66680  68415  70578
+##  6 West Midlands    10 All    33970  35053  36189  37776
+##  7 West Midlands    11 All    63184  64516  67074  68873
+##  8 West Midlands    11 All    33207  34097  35238  36394
+##  9 West Midlands    12 All    64639  63569  64847  67532
+## 10 West Midlands    12 All    33645  33370  34181  35424
+\end{verbatim}
+
+So its repeated! Typical british naming conventions, no consistency, no
+pattern, no sense. We couldve kept (or reintroduce) the geography codes
+to help us split these and rename them, but we dont need to as its clear
+that it alternates between West Midlands 1 and West Midlands 2.
+
+Lets fix this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Indexes for all "west midlands"" rows }
+\NormalTok{west_mid_indexes =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\KeywordTok{which}\NormalTok{(total_by_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ "West Midlands"}\NormalTok{))}
+
+\CommentTok{# Assign them new names in an alternating pattern}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ west_mid_indexes) \{}
+    
+    \ControlFlowTok{if}\NormalTok{ (i }\OperatorTok{%%}\StringTok{ }\DecValTok{2} \OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) \{}
+\NormalTok{        total_by_geog}\OperatorTok{$}\NormalTok{Geography[i] =}\StringTok{ "West Midlands 1"}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{        total_by_geog}\OperatorTok{$}\NormalTok{Geography[i] =}\StringTok{ "West Midlands 2"}
+\NormalTok{    \}}
+    
+\NormalTok{\}}
+
+\NormalTok{total_by_geog[west_mid_indexes[}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{], ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 7
+##    Geography         Age Sex   `2013` `2014` `2015` `2016`
+##    <chr>           <dbl> <chr>  <dbl>  <dbl>  <dbl>  <dbl>
+##  1 West Midlands 1     0 All    40614  39950  39392  39911
+##  2 West Midlands 2     0 All    72581  70964  69951  70974
+##  3 West Midlands 1     1 All    41573  40740  40106  39652
+##  4 West Midlands 2     1 All    74395  73210  71703  70807
+##  5 West Midlands 1    10 All    64238  66680  68415  70578
+##  6 West Midlands 2    10 All    33970  35053  36189  37776
+##  7 West Midlands 1    11 All    63184  64516  67074  68873
+##  8 West Midlands 2    11 All    33207  34097  35238  36394
+##  9 West Midlands 1    12 All    64639  63569  64847  67532
+## 10 West Midlands 2    12 All    33645  33370  34181  35424
+\end{verbatim}
+
+Finally, now we have a dataset we can use! Lets now do what we set out
+to do. Lets find the toal per geography per year!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# New set of unique geographies}
+\NormalTok{geography_set =}\StringTok{ }\KeywordTok{unique}\NormalTok{(total_by_geog}\OperatorTok{$}\NormalTok{Geography)}
+
+\NormalTok{num_geographies =}\StringTok{ }\KeywordTok{length}\NormalTok{(geography_set)}
+\NormalTok{population_per_geog =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Geography =}\NormalTok{ geography_set,}
+                                 \DataTypeTok{total_2013 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                 \DataTypeTok{total_2014 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                 \DataTypeTok{total_2015 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                 \DataTypeTok{total_2016 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies))}
+\NormalTok{                                 )}
+
+\CommentTok{# Loop through each geography}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(geography_set)) \{}
+    
+    \CommentTok{# Start and end indexes for each geography in cleaned data}
+\NormalTok{    start_index =}\StringTok{ }\DecValTok{91}\OperatorTok{*}\NormalTok{(i}\OperatorTok{-}\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{    end_index =}\StringTok{ }\DecValTok{91}\OperatorTok{*}\NormalTok{i}
+    
+    \CommentTok{# Find the sums of all age catagories per geography}
+\NormalTok{    population_per_geog[i, }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(total_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{4}\NormalTok{])}
+\NormalTok{    population_per_geog[i, }\DecValTok{3}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(total_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{5}\NormalTok{])}
+\NormalTok{    population_per_geog[i, }\DecValTok{4}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(total_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{6}\NormalTok{])}
+\NormalTok{    population_per_geog[i, }\DecValTok{5}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(total_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{7}\NormalTok{])}
+    
+\NormalTok{\}}
+
+\KeywordTok{head}\NormalTok{(population_per_geog, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                               Geography total_2013 total_2014 total_2015
+## 1                         Aberdeen City     227070     228920     230350
+## 2                         Aberdeenshire     257770     260530     261960
+## 3                                  Adur      62505      63176      63429
+## 4                             Allerdale      96208      96471      96660
+## 5                          Amber Valley     123498     123942     124069
+## 6                                 Angus     116290     116740     116900
+## 7               Antrim and Newtownabbey     139536     139966     140467
+## 8                   Ards and North Down     157640     205711     158797
+## 9                       Argyll and Bute      88050      87650      86890
+## 10 Armagh City, Banbridge and Craigavon     203757     336830     207797
+##    total_2016
+## 1      229840
+## 2      262190
+## 3       63506
+## 4       96956
+## 5      124645
+## 6      116520
+## 7      141032
+## 8      159593
+## 9       87130
+## 10     210260
+\end{verbatim}
+
+And finally we can find the minimum values per year and where they
+occur.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Since its only four years, we dont need a loop or anything more complicated}
+\NormalTok{population_per_geog[}\KeywordTok{which.min}\NormalTok{(population_per_geog}\OperatorTok{$}\NormalTok{total_}\DecValTok{2013}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{population_per_geog[}\KeywordTok{which.min}\NormalTok{(population_per_geog}\OperatorTok{$}\NormalTok{total_}\DecValTok{2014}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{population_per_geog[}\KeywordTok{which.min}\NormalTok{(population_per_geog}\OperatorTok{$}\NormalTok{total_}\DecValTok{2015}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{population_per_geog[}\KeywordTok{which.min}\NormalTok{(population_per_geog}\OperatorTok{$}\NormalTok{total_}\DecValTok{2016}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308
+\end{verbatim}
+
+Interesting, but not surprising.
+
+\subsection{Question 3}\label{question-3}
+
+\paragraph{Summary:}\label{summary-2}
+
+\begin{itemize}
+\tightlist
+\item
+  The greatest female to male ratio belonged to: Knowsley at 1.103591
+\item
+  The lowest female to male ratio belonged to: London at 0.8084654
+\item
+  There was an issue with a geography being duplicated, fixed it by
+  finding it and reanming it
+\item
+  We defined change in two different ways and saw very different results
+\end{itemize}
+
+Here our task is arguably simpler than the previous one. One way to
+proceed is to create a new data frame by dividing the female labelled
+rows by the male labelled rows, and then use that as a dataset for all
+of our later analysis in this question.
+
+As with the totals we used before, we also need to rename the west
+midlands rows for each of the female and male datasets.
+
+And by the way, I know I could create a function for renaming the
+alternating geographies, but this isnt Python and I'm sure that I wont
+need this code chunk ever again, so lets just copy and paste\ldots{}
+
+Lets go:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Find and seperate the rows labelled female and male by sex}
+\NormalTok{females_by_geog =}\StringTok{ }\NormalTok{cleaned_data[cleaned_data}\OperatorTok{$}\NormalTok{Sex }\OperatorTok{==}\StringTok{ 'Female'}\NormalTok{, ]}
+\NormalTok{males_by_geog =}\StringTok{ }\NormalTok{cleaned_data[cleaned_data}\OperatorTok{$}\NormalTok{Sex }\OperatorTok{==}\StringTok{ 'Male'}\NormalTok{, ]}
+
+\CommentTok{# Indexes for all "west midlands"" rows (same between all, female and male sets)}
+\NormalTok{west_mid_indexes =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\KeywordTok{which}\NormalTok{(females_by_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ "West Midlands"}\NormalTok{))}
+
+\CommentTok{# Assign them new names in an alternating pattern}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ west_mid_indexes) \{}
+    
+    \ControlFlowTok{if}\NormalTok{ (i }\OperatorTok{%%}\StringTok{ }\DecValTok{2} \OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) \{}
+\NormalTok{        females_by_geog}\OperatorTok{$}\NormalTok{Geography[i] =}\StringTok{ "West Midlands 1"}
+\NormalTok{        males_by_geog}\OperatorTok{$}\NormalTok{Geography[i] =}\StringTok{ "West Midlands 1"}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{        females_by_geog}\OperatorTok{$}\NormalTok{Geography[i] =}\StringTok{ "West Midlands 2"}
+\NormalTok{        males_by_geog}\OperatorTok{$}\NormalTok{Geography[i] =}\StringTok{ "West Midlands 2"}
+\NormalTok{    \}}
+    
+\NormalTok{\}}
+
+\NormalTok{females_by_geog[west_mid_indexes[}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{], ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 7
+##    Geography         Age Sex    `2013` `2014` `2015` `2016`
+##    <chr>           <dbl> <chr>   <dbl>  <dbl>  <dbl>  <dbl>
+##  1 West Midlands 1     0 Female  19682  19357  19251  19460
+##  2 West Midlands 2     0 Female  35147  34524  33987  34494
+##  3 West Midlands 1     1 Female  20095  19771  19439  19407
+##  4 West Midlands 2     1 Female  36101  35472  34883  34470
+##  5 West Midlands 1    10 Female  31226  32448  33429  34671
+##  6 West Midlands 2    10 Female  16507  17058  17692  18521
+##  7 West Midlands 1    11 Female  30888  31393  32631  33624
+##  8 West Midlands 2    11 Female  16171  16555  17150  17775
+##  9 West Midlands 1    12 Female  31695  31046  31538  32833
+## 10 West Midlands 2    12 Female  16519  16241  16590  17212
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{males_by_geog[west_mid_indexes[}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{], ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 7
+##    Geography         Age Sex   `2013` `2014` `2015` `2016`
+##    <chr>           <dbl> <chr>  <dbl>  <dbl>  <dbl>  <dbl>
+##  1 West Midlands 1     0 Male   37434  36440  35964  36480
+##  2 West Midlands 2     0 Male   20932  20593  20141  20451
+##  3 West Midlands 1     1 Male   38294  37738  36820  36337
+##  4 West Midlands 2     1 Male   21478  20969  20667  20245
+##  5 West Midlands 1    10 Male   33012  34232  34986  35907
+##  6 West Midlands 2    10 Male   17463  17995  18497  19255
+##  7 West Midlands 1    11 Male   32296  33123  34443  35249
+##  8 West Midlands 2    11 Male   17036  17542  18088  18619
+##  9 West Midlands 1    12 Male   32944  32523  33309  34699
+## 10 West Midlands 2    12 Male   17126  17129  17591  18212
+\end{verbatim}
+
+To find the totals, its the same process as before pretty much, but we
+should note that since the female and male datasets are pretty much
+identical by the first collumn, many calculations and sortings only have
+to be done once for one of the datasets and can be used for both.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# New set of unique geographies}
+\NormalTok{geography_set =}\StringTok{ }\KeywordTok{unique}\NormalTok{(females_by_geog}\OperatorTok{$}\NormalTok{Geography)}
+
+\NormalTok{num_geographies =}\StringTok{ }\KeywordTok{length}\NormalTok{(geography_set)}
+\NormalTok{total_fem_per_geog =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Geography =}\NormalTok{ geography_set,}
+                                \DataTypeTok{total_2013 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                \DataTypeTok{total_2014 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                \DataTypeTok{total_2015 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                \DataTypeTok{total_2016 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies))}
+\NormalTok{                                )}
+\NormalTok{total_male_per_geog =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Geography =}\NormalTok{ geography_set,}
+                                 \DataTypeTok{total_2013 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                 \DataTypeTok{total_2014 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                 \DataTypeTok{total_2015 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies)),}
+                                 \DataTypeTok{total_2016 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, num_geographies))}
+\NormalTok{                                 )}
+
+\CommentTok{# Loop through each geography}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(geography_set)) \{}
+    
+    \CommentTok{# Start and end indexes for each geography in cleaned data}
+\NormalTok{    start_index =}\StringTok{ }\DecValTok{91}\OperatorTok{*}\NormalTok{(i}\OperatorTok{-}\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{    end_index =}\StringTok{ }\DecValTok{91}\OperatorTok{*}\NormalTok{i}
+    
+    \CommentTok{# Find the sums of all females of all age catagories per geography}
+\NormalTok{    total_fem_per_geog[i, }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(females_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{4}\NormalTok{])}
+\NormalTok{    total_fem_per_geog[i, }\DecValTok{3}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(females_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{5}\NormalTok{])}
+\NormalTok{    total_fem_per_geog[i, }\DecValTok{4}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(females_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{6}\NormalTok{])}
+\NormalTok{    total_fem_per_geog[i, }\DecValTok{5}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(females_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{7}\NormalTok{])}
+    
+    \CommentTok{# Find the sums of all males of all age catagories per geography}
+\NormalTok{    total_male_per_geog[i, }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(males_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{4}\NormalTok{])}
+\NormalTok{    total_male_per_geog[i, }\DecValTok{3}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(males_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{5}\NormalTok{])}
+\NormalTok{    total_male_per_geog[i, }\DecValTok{4}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(males_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{6}\NormalTok{])}
+\NormalTok{    total_male_per_geog[i, }\DecValTok{5}\NormalTok{] =}\StringTok{ }\KeywordTok{sum}\NormalTok{(males_by_geog[start_index}\OperatorTok{:}\NormalTok{end_index , }\DecValTok{7}\NormalTok{])}
+    
+\NormalTok{\}}
+
+\KeywordTok{head}\NormalTok{(total_fem_per_geog, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                               Geography total_2013 total_2014 total_2015
+## 1                         Aberdeen City     114535     115443     115936
+## 2                         Aberdeenshire     129734     131059     131816
+## 3                                  Adur      32294      32568      32676
+## 4                             Allerdale      48858      49034      49069
+## 5                          Amber Valley      62898      63098      63133
+## 6                                 Angus      59687      59923      59950
+## 7               Antrim and Newtownabbey      71790      72068      72344
+## 8                   Ards and North Down      81349     103853      81866
+## 9                       Argyll and Bute      44583      44245      43915
+## 10 Armagh City, Banbridge and Craigavon     102976     174422     104770
+##    total_2016
+## 1      115719
+## 2      131819
+## 3       32595
+## 4       49127
+## 5       63432
+## 6       59751
+## 7       72544
+## 8       82248
+## 9       43811
+## 10     105937
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(total_male_per_geog, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                               Geography total_2013 total_2014 total_2015
+## 1                         Aberdeen City     112535     113477     114414
+## 2                         Aberdeenshire     128036     129471     130144
+## 3                                  Adur      30211      30608      30753
+## 4                             Allerdale      47350      47437      47591
+## 5                          Amber Valley      60600      60844      60936
+## 6                                 Angus      56603      56817      56950
+## 7               Antrim and Newtownabbey      67746      67898      68123
+## 8                   Ards and North Down      76291     101858      76931
+## 9                       Argyll and Bute      43467      43405      42975
+## 10 Armagh City, Banbridge and Craigavon     100781     162408     103027
+##    total_2016
+## 1      114121
+## 2      130371
+## 3       30911
+## 4       47829
+## 5       61213
+## 6       56769
+## 7       68488
+## 8       77345
+## 9       43319
+## 10     104323
+\end{verbatim}
+
+Now we have data frames for almost exactly what we want, all thats left
+is to effectivley divide the female dataset by the male dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ratios_per_geog =}\StringTok{ }\NormalTok{total_fem_per_geog}
+\KeywordTok{colnames}\NormalTok{(ratios_per_geog) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"Ratios_2013"}\NormalTok{, }\StringTok{"Ratios_2014"}\NormalTok{,}
+                              \StringTok{"Ratios_2015"}\NormalTok{, }\StringTok{"Ratios_2016"}\NormalTok{)}
+\NormalTok{ratios_per_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{] =}\StringTok{ }\NormalTok{total_fem_per_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{]}\OperatorTok{/}\NormalTok{total_male_per_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{]}
+
+\KeywordTok{head}\NormalTok{(ratios_per_geog, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                               Geography Ratios_2013 Ratios_2014
+## 1                         Aberdeen City    1.017772    1.017325
+## 2                         Aberdeenshire    1.013262    1.012265
+## 3                                  Adur    1.068948    1.064036
+## 4                             Allerdale    1.031848    1.033666
+## 5                          Amber Valley    1.037921    1.037046
+## 6                                 Angus    1.054485    1.054667
+## 7               Antrim and Newtownabbey    1.059694    1.061416
+## 8                   Ards and North Down    1.066299    1.019586
+## 9                       Argyll and Bute    1.025675    1.019353
+## 10 Armagh City, Banbridge and Craigavon    1.021780    1.073974
+##    Ratios_2015 Ratios_2016
+## 1     1.013303    1.014003
+## 2     1.012847    1.011107
+## 3     1.062530    1.054479
+## 4     1.031056    1.027138
+## 5     1.036054    1.036250
+## 6     1.052678    1.052529
+## 7     1.061961    1.059222
+## 8     1.064148    1.063391
+## 9     1.021873    1.011358
+## 10    1.016918    1.015471
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ratios_per_geog[}\KeywordTok{which.max}\NormalTok{(ratios_per_geog}\OperatorTok{$}\NormalTok{Ratios_}\DecValTok{2013}\NormalTok{), }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Geography Ratios_2013
+## 200  Knowsley    1.103591
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# I was curious...}
+\NormalTok{ratios_per_geog[}\KeywordTok{which.min}\NormalTok{(ratios_per_geog}\OperatorTok{$}\NormalTok{Ratios_}\DecValTok{2013}\NormalTok{), }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography Ratios_2013
+## 79 City of London   0.8084654
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Just checking to make sure that you aren't lying to me...}
+\NormalTok{ratios_per_geog[ratios_per_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ "Fylde"}\NormalTok{, }\DecValTok{5}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.044192
+\end{verbatim}
+
+And here are our answers!
+
+Now when we talk about change the most obvious method to discuss it
+would be to calculate the absolute difference between the 2016 and 2013
+ratios, but we should stop and think: is that really what change means?
+Suppose that for one geography, the ratio in 2016 was 1.2 and in 2013
+was 0.9, growing by 0.1 each year. This could mean a change of 0.3 and
+we could call this the largest change. But what if another geography
+went from 0.9 to 0.4 then to 1.8 down to 1.2? The change here would be
+(by the previous definition) 0.3, but clearly between 2013 and 2016,
+this geography has experienced much more change!
+
+For this reason, we will define two types of changes. One will of course
+be the absolute difference between the value at 2016 and 2013, wheras
+the other will be the sum of absolute differences between the values at
+each year in between and including 2013 and 2016.
+
+For the simple method, lets just create a frame which records the
+absolute value of the differences between the 2013 and 2016 collumns
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{abs_change_per_geog =}\StringTok{ }\NormalTok{ratios_per_geog[ , }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]}
+\KeywordTok{colnames}\NormalTok{(abs_change_per_geog) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"Change_2013"}\NormalTok{)}
+
+\CommentTok{# Simple elementwise subtraction and absolute value}
+\NormalTok{abs_change_per_geog[ , }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{abs}\NormalTok{(ratios_per_geog[ , }\DecValTok{5}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{ratios_per_geog[ , }\DecValTok{2}\NormalTok{])}
+
+\NormalTok{abs_change_per_geog[}\KeywordTok{which.max}\NormalTok{(abs_change_per_geog}\OperatorTok{$}\NormalTok{Change_}\DecValTok{2013}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Geography Change_2013
+## 237     Moray  0.06744424
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{abs_change_per_geog[}\KeywordTok{which.min}\NormalTok{(abs_change_per_geog}\OperatorTok{$}\NormalTok{Change_}\DecValTok{2013}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Geography  Change_2013
+## 425 Winchester 3.113903e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cum_change_per_geog =}\StringTok{ }\NormalTok{ratios_per_geog[ , }\DecValTok{1}\OperatorTok{:}\DecValTok{4}\NormalTok{]}
+\KeywordTok{colnames}\NormalTok{(cum_change_per_geog) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"2013->2014"}\NormalTok{,}
+                                  \StringTok{"2014->2015"}\NormalTok{, }\StringTok{"2015->2016"}\NormalTok{)}
+
+\CommentTok{# Simple elementwise subtraction and absolute value}
+\NormalTok{cum_change_per_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{4}\NormalTok{] =}\StringTok{ }\KeywordTok{abs}\NormalTok{(ratios_per_geog[ , }\DecValTok{3}\OperatorTok{:}\DecValTok{5}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{ratios_per_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{4}\NormalTok{])}
+
+\NormalTok{total_cum_change =}\StringTok{ }\NormalTok{ratios_per_geog[ , }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]}
+\KeywordTok{colnames}\NormalTok{(total_cum_change) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"Abs_cumulative_change"}\NormalTok{)}
+
+\CommentTok{# Sum up all the changes over the years}
+\NormalTok{total_cum_change[ , }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{rowSums}\NormalTok{(cum_change_per_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{4}\NormalTok{])}
+
+\NormalTok{total_cum_change[}\KeywordTok{which.max}\NormalTok{(total_cum_change}\OperatorTok{$}\NormalTok{Abs_cumulative_change), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Geography Abs_cumulative_change
+## 25   Belfast             0.1112881
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{total_cum_change[}\KeywordTok{which.min}\NormalTok{(total_cum_change}\OperatorTok{$}\NormalTok{Abs_cumulative_change), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Geography Abs_cumulative_change
+## 361   Suffolk          0.0004002879
+\end{verbatim}
+
+So is seems belfast has seen the most changes over the years to its
+ratio, and Suffolk has had the least. This is a much more interesting
+view of the change, now we can investigate belfast and find out whats
+causing this rather extreme change! Infact, we could have been smarter
+and seen what direction it changes in (more males or females overall
+etc.)
+
+\subsection{Question 4}\label{question-4}
+
+\paragraph{Summary:}\label{summary-3}
+
+\begin{itemize}
+\tightlist
+\item
+  Plotting the graph was quite helpful, some interesting analysis was
+  made
+\item
+  We used both or definitions for change to discuss the over-65
+  population
+\item
+  We found a potential sneaky plot against us
+\end{itemize}
+
+Lets go and start making some plots. We already have some data frames
+from before that we can reuse, and from these we can quite easily find
+the total population by age for each sex. After that, its as simple as a
+2 day long war with ggplot to force it to submit to you.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{females_by_age =}\StringTok{ }\NormalTok{females_by_geog[ , }\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{7}\NormalTok{)]}
+\NormalTok{males_by_age =}\StringTok{ }\NormalTok{males_by_geog[ , }\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{7}\NormalTok{)]}
+
+\NormalTok{age_dist =}\StringTok{ }\KeywordTok{data_frame}\NormalTok{(}\DataTypeTok{Ages =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\OperatorTok{:}\DecValTok{90}\NormalTok{),}
+                      \DataTypeTok{Total_females =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{91}\NormalTok{)),}
+                      \DataTypeTok{Total_males =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{91}\NormalTok{)))}
+
+\CommentTok{# Finding sums of all age categories}
+\ControlFlowTok{for}\NormalTok{ (age }\ControlFlowTok{in} \DecValTok{0}\OperatorTok{:}\DecValTok{90}\NormalTok{) \{}
+    
+\NormalTok{    age_dist[age}\OperatorTok{+}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{colSums}\NormalTok{(females_by_age[females_by_age}\OperatorTok{$}\NormalTok{Age }\OperatorTok{==}\StringTok{ }\NormalTok{age, }\DecValTok{2}\NormalTok{])}
+\NormalTok{    age_dist[age}\OperatorTok{+}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{] =}\StringTok{ }\KeywordTok{colSums}\NormalTok{(males_by_age[males_by_age}\OperatorTok{$}\NormalTok{Age }\OperatorTok{==}\StringTok{ }\NormalTok{age, }\DecValTok{2}\NormalTok{])}
+    
+\NormalTok{\}}
+
+\CommentTok{# Some fancy but annoying ggplotting}
+\KeywordTok{ggplot}\NormalTok{(age_dist) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ age_dist}\OperatorTok{$}\NormalTok{Ages, }\DataTypeTok{y =}\NormalTok{ age_dist}\OperatorTok{$}\NormalTok{Total_females, }\DataTypeTok{color =} \StringTok{"Female"}\NormalTok{), }\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ age_dist}\OperatorTok{$}\NormalTok{Ages, }\DataTypeTok{y =}\NormalTok{ age_dist}\OperatorTok{$}\NormalTok{Total_males, }\DataTypeTok{color =} \StringTok{"Male"}\NormalTok{), }\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{values=}\KeywordTok{c}\NormalTok{(}\StringTok{"Female"}\NormalTok{=}\StringTok{"blue"}\NormalTok{, }\StringTok{"Male"}\NormalTok{=}\StringTok{"red"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme_bw}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{1.1}\OperatorTok{*}\KeywordTok{max}\NormalTok{(age_dist[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{3}\NormalTok{]), }\DecValTok{5}\OperatorTok{*}\NormalTok{(}\DecValTok{10}\OperatorTok{^}\DecValTok{5}\NormalTok{))) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{90}\NormalTok{, }\DecValTok{5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{panel.border =} \KeywordTok{element_blank}\NormalTok{(),}
+          \DataTypeTok{panel.grid.major =} \KeywordTok{element_blank}\NormalTok{(),}
+          \DataTypeTok{axis.line =} \KeywordTok{element_line}\NormalTok{(}\DataTypeTok{colour =} \StringTok{"black"}\NormalTok{, }\DataTypeTok{size =} \FloatTok{1.5}\NormalTok{)) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Age"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Population size"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Population in 2016 based on Age"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Population_analysis_files/figure-latex/Plotting Age distribution-1.pdf}
+
+So here we see some interesting things. It seems like initially, the
+number of males is signinficantly higher than females, and it seems to
+stay that way quite consistently until about the age of 28. The higher
+birth rate of male children is indeed strange as outside of wartime,
+youd assume it's pretty much 50/50.
+
+The decrease in the number of males in the ``middle-age'' bracket could
+be due to the higher death rates for men due to not only the terrifying
+male suicide rate this country has, but also possibly men having greater
+risks of contracting or dying to terminal ilnesses or conditions. It may
+even have to do with the professions that some men work in being more
+dangerous, and the risk of death before retirement being greater.
+
+This trend seems to continue later too, as men also have a lower life
+expectancy than women, and so its very normal to see that the number of
+males heavily decreases compared to females in the late 80's and 90s.
+
+The spike we see at the end of the graph is of course due to the date
+grouping all 90+ year olds into one category.
+
+Now to look at the proportions of over 65's in each geography. For the
+first part, we will look at any particular spikes or dips over any of
+the 4 years.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog =}\StringTok{ }\NormalTok{ratios_per_geog[ , ]}
+\KeywordTok{colnames}\NormalTok{(over65s_by_geog) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"2013"}\NormalTok{, }\StringTok{"2014"}\NormalTok{, }\StringTok{"2015"}\NormalTok{, }\StringTok{"2016"}\NormalTok{)}
+
+\CommentTok{# Finding sums of all age categories}
+\ControlFlowTok{for}\NormalTok{ (geography }\ControlFlowTok{in}\NormalTok{ geography_set) \{}
+    
+\NormalTok{    temp_frame =}\StringTok{ }\NormalTok{total_by_geog[(total_by_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ }\NormalTok{geography), ]}
+\NormalTok{    over65s_by_geog[over65s_by_geog}\OperatorTok{$}\NormalTok{Geography }\OperatorTok{==}\StringTok{ }\NormalTok{geography, }\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{] =}\StringTok{ }\KeywordTok{colSums}\NormalTok{(temp_frame[temp_frame}\OperatorTok{$}\NormalTok{Age }\OperatorTok{>=}\StringTok{ }\DecValTok{65}\NormalTok{, }\DecValTok{4}\OperatorTok{:}\DecValTok{7}\NormalTok{])}
+\NormalTok{\}}
+
+\CommentTok{# Dividing be total population to find proportions}
+\NormalTok{over65s_by_geog[}\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{] =}\StringTok{ }\NormalTok{over65s_by_geog[}\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{] }\OperatorTok{/}\StringTok{ }\NormalTok{population_per_geog[}\DecValTok{2}\OperatorTok{:}\DecValTok{5}\NormalTok{]}
+\KeywordTok{head}\NormalTok{(over65s_by_geog, }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                               Geography      2013      2014      2015
+## 1                         Aberdeen City 0.1484564 0.1496680 0.1494508
+## 2                         Aberdeenshire 0.1721806 0.1757571 0.1783135
+## 3                                  Adur 0.2285097 0.2312112 0.2317867
+## 4                             Allerdale 0.2232870 0.2287527 0.2326505
+## 5                          Amber Valley 0.2028454 0.2086056 0.2127929
+## 6                                 Angus 0.2147734 0.2196762 0.2230710
+## 7               Antrim and Newtownabbey 0.1536091 0.1571382 0.1593186
+## 8                   Ards and North Down 0.1897742 0.1470218 0.1993929
+## 9                       Argyll and Bute 0.2343101 0.2409127 0.2454137
+## 10 Armagh City, Banbridge and Craigavon 0.1446871 0.1459609 0.1490926
+##         2016
+## 1  0.1515489
+## 2  0.1821999
+## 3  0.2319781
+## 4  0.2369528
+## 5  0.2165590
+## 6  0.2273172
+## 7  0.1616725
+## 8  0.2033360
+## 9  0.2474004
+## 10 0.1506849
+\end{verbatim}
+
+Now lets find the extreme values:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Maximums}
+\NormalTok{over65s_by_geog[}\KeywordTok{which.max}\NormalTok{(over65s_by_geog[ , }\DecValTok{2}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography      2013
+## 418 West Somerset 0.3119464
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog[}\KeywordTok{which.max}\NormalTok{(over65s_by_geog[ , }\DecValTok{3}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography     2014
+## 418 West Somerset 0.318542
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog[}\KeywordTok{which.max}\NormalTok{(over65s_by_geog[ , }\DecValTok{4}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography      2015
+## 418 West Somerset 0.3268029
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog[}\KeywordTok{which.max}\NormalTok{(over65s_by_geog[ , }\DecValTok{5}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{5}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography      2016
+## 418 West Somerset 0.3331779
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Minimums}
+\NormalTok{over65s_by_geog[}\KeywordTok{which.min}\NormalTok{(over65s_by_geog[ , }\DecValTok{2}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography       2013
+## 387 Tower Hamlets 0.06086702
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog[}\KeywordTok{which.min}\NormalTok{(over65s_by_geog[ , }\DecValTok{3}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography      2014
+## 387 Tower Hamlets 0.0601764
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog[}\KeywordTok{which.min}\NormalTok{(over65s_by_geog[ , }\DecValTok{4}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography       2015
+## 387 Tower Hamlets 0.05991139
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_by_geog[}\KeywordTok{which.min}\NormalTok{(over65s_by_geog[ , }\DecValTok{5}\NormalTok{]), }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{5}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Geography       2016
+## 387 Tower Hamlets 0.05991721
+\end{verbatim}
+
+Once again, we something that is incredibly interesting. For all 4
+years, West somerset has consistently had around 1/3 of its population
+at over 65 years of age, and Tower Hamlets has had under 7\% of the same
+age group! What is it about these places that draws or repels certain
+age groups? Not too surprising once you actually visit tower hamlets
+though, and I can imagine the same for West somerset\ldots{}
+
+Now finally to calculate the cahnges over time, and once again we will
+use both of our definitions for this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_simple_change =}\StringTok{ }\NormalTok{over65s_by_geog[ , }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]}
+\KeywordTok{colnames}\NormalTok{(over65s_simple_change) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"Change"}\NormalTok{)}
+
+\NormalTok{over65s_simple_change[ , }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{abs}\NormalTok{(over65s_by_geog[ , }\DecValTok{5}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{over65s_by_geog[ , }\DecValTok{2}\NormalTok{])}
+
+\NormalTok{over65s_simple_change[}\KeywordTok{which.max}\NormalTok{(over65s_simple_change[ , }\DecValTok{2}\NormalTok{]) , ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                 Geography     Change
+## 107 Dumfries and Galloway 0.07504721
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_simple_change[}\KeywordTok{which.min}\NormalTok{(over65s_simple_change[ , }\DecValTok{2}\NormalTok{]) , ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                       Geography       Change
+## 23 Bath and North East Somerset 3.659411e-05
+\end{verbatim}
+
+It seems that looking at the net loss from 2016 to 2013 reveals that the
+proportion of over 65s in Dumfries and Galloway changed by a significant
+amount, Wheras it seems Bath and NE Somerset has stayed pretty much the
+same.
+
+Finally, the cumulative change over the years:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_cum_changes =}\StringTok{ }\NormalTok{over65s_by_geog[ , }\DecValTok{1}\OperatorTok{:}\DecValTok{4}\NormalTok{]}
+\KeywordTok{colnames}\NormalTok{(over65s_cum_changes) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"2013->2014"}\NormalTok{,}
+                                    \StringTok{"2014->2015"}\NormalTok{, }\StringTok{"2015->2016"}\NormalTok{)}
+
+\NormalTok{over65s_cum_changes[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{4}\NormalTok{] =}\StringTok{ }\NormalTok{over65s_by_geog[ , }\DecValTok{3}\OperatorTok{:}\DecValTok{5}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{over65s_by_geog[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{4}\NormalTok{]}
+
+\NormalTok{over65s_net_change =}\StringTok{ }\NormalTok{over65s_by_geog[ , }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]}
+\KeywordTok{colnames}\NormalTok{(over65s_simple_change) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Geography"}\NormalTok{, }\StringTok{"net_change"}\NormalTok{)}
+
+\NormalTok{over65s_net_change[ , }\DecValTok{2}\NormalTok{] =}\StringTok{ }\KeywordTok{rowSums}\NormalTok{(over65s_cum_changes[ , }\DecValTok{2}\OperatorTok{:}\DecValTok{4}\NormalTok{])}
+
+\NormalTok{over65s_net_change[}\KeywordTok{which.max}\NormalTok{(over65s_net_change[ , }\DecValTok{2}\NormalTok{]) , ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                 Geography       2013
+## 107 Dumfries and Galloway 0.07504721
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{over65s_net_change[}\KeywordTok{which.min}\NormalTok{(over65s_net_change[ , }\DecValTok{2}\NormalTok{]) , ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Geography        2013
+## 60   Cardiff -0.05711526
+\end{verbatim}
+
+Once again, Dumfries and Galloway takes the lead as the most dynamic and
+fast-moving scene for over 65's, and now we see Cardiff over the years
+has actually either not changed much or has averaged out to a small loss
+in the over 65's
+
+\subsubsection{This concludes the
+report.}\label{this-concludes-the-report.}
+
+Oh wait, dont think I missed this. Thought you could fool me?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{population_per_geog[}\KeywordTok{which.max}\NormalTok{(population_per_geog}\OperatorTok{$}\NormalTok{total_}\DecValTok{2013}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          Geography total_2013 total_2014 total_2015 total_2016
+## 391 United Kingdom   64105654   64596752   65110034   65648054
+\end{verbatim}
+
+Well so far it doesnt seem to have affected any of our results
+adversely. Even when summing results or comparing, the constant addition
+from this geography would've refelected the proportions we have been
+dealing with in a consistent way. By this I mean that the effects on the
+totals or ratios that this geography has had has been equivalent for all
+age groups of Sexes over all the comparisons. This shoudlnt be a
+problem, even for the other geographies like ``Great Britain'',
+``England and wales'', ``England'', ``Wales'' and so on.
+
+
+\end{document}

@@ -153,9 +153,10 @@ library(dplyr)</code></pre>
 <h4>Summary:</h4>
 <ul>
 <li>The collumn names weren’t very freindly, so we gave them more meaningful names</li>
-<li>Everything was stored as strings, not useful for dealing with numberslike age or population size, we converted the collumn data types as appropriate</li>
-<li>Age is catagorical here, and one of the catagories, “90+” wasnt very freindly so we replaced it by “90” and it means the same thing to us</li>
+<li>Everything was stored as strings, not useful for dealing with numbers like age or population size, we converted the collumn data types as appropriate</li>
+<li>Age is categorical here, and one of the catagories, “90+” wasn’t very friendly so we replaced it by “90” and it means the same thing to us</li>
 <li>Geography code is most likely useless for us, and so isn’t needed.</li>
+<li>I present some solutions to more minor problems at the end</li>
 </ul>
 <p>Lets see what we are dealing with.</p>
 <pre class="r"><code>raw_import_data = read_excel(&quot;population.xlsx&quot;, sheet = &quot;Dataset&quot;)
@@ -211,7 +212,7 @@ head(cleaned_data, 10)</code></pre>
 ##  9 Yorkshire an~ E12000003        90+   Female 30244~ 31337~ 31006~ 31657~
 ## 10 Yorkshire an~ E12000003        90+   Male   11600~ 12462~ 12815~ 13306~</code></pre>
 <p>Additionally, we should make sure the data types of the values in the data frame are appropriate. It seems that everything is stored as strings within the frame. This also explains why 9 comes after 89 here! So lets convert age and population sizes in each year to numbers.</p>
-<p>One issue is that the Age catagory has an entry of “90+” which would result in NULL values when forced to numeric (as.numeric() is very smart when converting factors to numbers, but not that smart) . To counter this, we can rename the 90+ catagory to just 90. This would preserve the information (as we know now that the number 90 will mean all ages 90 and above) and make things easy to work with. Converting age to a double as opposed to 8 bit int isnt too important as performance isnt an issue yet.</p>
+<p>One issue is that the Age catagory has an entry of “90+” which would result in NULL values when forced to numeric (as.numeric() is very smart when converting factors to numbers, but not that smart) . To counter this, we can rename the 90+ category to just 90. This would preserve the information (as we know now that the number 90 will mean all ages 90 and above) and make things easy to work with. Converting age to a double as opposed to 8 bit int isnt too important as performance isnt an issue yet.</p>
 <pre class="r"><code># Replace all instances of '90' string with '90'
 cleaned_data$Age[cleaned_data$Age == '90+'] = '90'
 cleaned_data$Age = as.numeric(cleaned_data$Age)
@@ -263,16 +264,560 @@ tail(cleaned_data, 10)</code></pre>
 ##  8 Yorkshire and~ E12000003           90 All    41844  43799  43821  44963
 ##  9 Yorkshire and~ E12000003           90 Fema~  30244  31337  31006  31657
 ## 10 Yorkshire and~ E12000003           90 Male   11600  12462  12815  13306</code></pre>
-<p>Ok, so finally it seems we have a nice looking dataset.</p>
-<p>Now we still have quite a few tasks ahead of us. We should always check our data before use (even before exploratory analysis) for any surpises or inconsistencies etc. The checks we might want to do here are:</p>
+<p>Ok, so finally it seems we have a nice looking dataset. We could still sort the ages into ascending order by numbers, but it’s not really an issue yet. If we did have to however, we’d have to sort the data frame by age first and then by geography to retain the alphabetical ordering of the geography collumn.</p>
+<p>Now we still have quite a few tasks ahead of us. We should always check our data before use (even before exploratory analysis) for any surprises or inconsistencies etc. The checks we might want to do here are:</p>
 <ul>
-<li>Is there always a one to one mapping between geography and its code? <strong>(Can check this by creating a hash map or dictionary and looking for any multiple values to any keys)</strong></li>
-<li>If not, does this mean that the Geography codes are neccessary or useless? <strong>(Probabaly useless)</strong></li>
-<li>Does every geography have data for all age catagories? (integers from 0 to 90) <strong>(Again, can create a hash map and compare values to each key against expectations)</strong></li>
-<li>Are there any missing entries <strong>(Can create a heat map of the data frame by index and look for any 0’s)</strong></li>
+<li>Is there always a one to one mapping between geography and its code? <strong>(Can check this by creating a hash map or dictionary and looking for any multiple values to any keys?)</strong></li>
+<li>If not, does this mean that the Geography codes are neccessary or useless? <strong>(Probabaly useless?)</strong></li>
+<li>Does every geography have data for all age catagories? (integers from 0 to 90) <strong>(Again, can create a hash map and compare values to each key against expectations?)</strong></li>
+<li>Are there any missing entries <strong>(Can create a heat map of the data frame by index and look for any 0’s?)</strong></li>
 </ul>
 <p>But in this situation, its quite reasonable to assume that none of these extreme cases will be realised here. Lets finally get rid of the geography code collumn</p>
 <pre class="r"><code>cleaned_data = cleaned_data[ , -2]</code></pre>
+</div>
+</div>
+<div id="question-2" class="section level2">
+<h2>Question 2</h2>
+<div id="summary-1" class="section level4">
+<h4>Summary:</h4>
+<ul>
+<li>The smallest total population belonged to:</li>
+<li>2013: Isles of Scilly, 2251</li>
+<li>2014: Isles of Scilly, 2280</li>
+<li>2015: Isles of Scilly, 2324</li>
+<li>2016: Isles of Scilly, 2308</li>
+<li>There was an issue with a geography being duplicated, fixed it by finding it and reanming it</li>
+<li>Finding the sum was quite easy since we know that each geography now has 91 age catagories exactly</li>
+</ul>
+<p>This should be quite a simple task, since we’ve converted the population values to numbers, we find the total population size for each geography by summing over each age category for each year. Lets demonstrate what we mean:</p>
+<pre class="r"><code># Only take the rows where the sex is &quot;All&quot;
+total_by_geog = cleaned_data[cleaned_data$Sex == 'All', ]
+
+head(total_by_geog, 10)</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##    Geography       Age Sex   `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Aberdeen City     0 All     2529   2560   2518   2533
+##  2 Aberdeen City     1 All     2589   2466   2493   2454
+##  3 Aberdeen City    10 All     1760   1777   1908   1945
+##  4 Aberdeen City    11 All     1759   1742   1781   1889
+##  5 Aberdeen City    12 All     1764   1747   1739   1780
+##  6 Aberdeen City    13 All     1877   1769   1744   1733
+##  7 Aberdeen City    14 All     1868   1884   1781   1745
+##  8 Aberdeen City    15 All     1906   1875   1891   1794
+##  9 Aberdeen City    16 All     1988   1922   1897   1893
+## 10 Aberdeen City    17 All     2063   2086   2027   1921</code></pre>
+<p>So now we have only information about all people in each age category per geography, and since we know there are 91 catagories in age (0 to 90) we can simply make a new frame which contains the sum of all ages per geography.</p>
+<pre class="r"><code>geography_set = unique(total_by_geog$Geography)
+
+length(geography_set)</code></pre>
+<pre><code>## [1] 439</code></pre>
+<pre class="r"><code>nrow(total_by_geog)</code></pre>
+<pre><code>## [1] 40040</code></pre>
+<p>Hold on a second… We have 439 unique geographies in our dataset, across 40040 rows but we have (theoretically) 91 age catagories per geography. This is contradictory as:</p>
+<pre class="r"><code>40040/439</code></pre>
+<pre><code>## [1] 91.20729</code></pre>
+<p>Implying that there are some geographies in the data set which have more than 91 age catagories!!?? Lets try to find how many age catagories each geography has and single out a culprit.</p>
+<pre class="r"><code># Iterate through all geographies
+for (i in 1:length(geography_set)) {
+    
+    # Find how many rows with that geography name occur
+    suspect = geography_set[i]
+    num_catagories = length(which(total_by_geog$Geography == suspect))
+    
+    # Single it out, report it
+    culprits = c()
+    if (num_catagories &gt; 91) {
+        cat(paste(suspect, &quot;has&quot;, num_catagories, &quot;catagories&quot;, sep = &quot; &quot;))
+        culprits = c(culprits, suspect)
+    }
+    
+}</code></pre>
+<pre><code>## West Midlands has 182 catagories</code></pre>
+<p>So whats actually going on with West Midlands?</p>
+<pre class="r"><code>head(total_by_geog[total_by_geog$Geography == &quot;West Midlands&quot;, ], 10)</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##    Geography       Age Sex   `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 West Midlands     0 All    40614  39950  39392  39911
+##  2 West Midlands     0 All    72581  70964  69951  70974
+##  3 West Midlands     1 All    41573  40740  40106  39652
+##  4 West Midlands     1 All    74395  73210  71703  70807
+##  5 West Midlands    10 All    64238  66680  68415  70578
+##  6 West Midlands    10 All    33970  35053  36189  37776
+##  7 West Midlands    11 All    63184  64516  67074  68873
+##  8 West Midlands    11 All    33207  34097  35238  36394
+##  9 West Midlands    12 All    64639  63569  64847  67532
+## 10 West Midlands    12 All    33645  33370  34181  35424</code></pre>
+<p>So its repeated! Typical british naming conventions, no consistency, no pattern, no sense. We couldve kept (or reintroduce) the geography codes to help us split these and rename them, but we dont need to as its clear that it alternates between West Midlands 1 and West Midlands 2.</p>
+<p>Lets fix this:</p>
+<pre class="r"><code># Indexes for all &quot;west midlands&quot;&quot; rows 
+west_mid_indexes = c(which(total_by_geog$Geography == &quot;West Midlands&quot;))
+
+# Assign them new names in an alternating pattern
+for (i in west_mid_indexes) {
+    
+    if (i %% 2 == 1) {
+        total_by_geog$Geography[i] = &quot;West Midlands 1&quot;
+    } else {
+        total_by_geog$Geography[i] = &quot;West Midlands 2&quot;
+    }
+    
+}
+
+total_by_geog[west_mid_indexes[1:10], ]</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##    Geography         Age Sex   `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 West Midlands 1     0 All    40614  39950  39392  39911
+##  2 West Midlands 2     0 All    72581  70964  69951  70974
+##  3 West Midlands 1     1 All    41573  40740  40106  39652
+##  4 West Midlands 2     1 All    74395  73210  71703  70807
+##  5 West Midlands 1    10 All    64238  66680  68415  70578
+##  6 West Midlands 2    10 All    33970  35053  36189  37776
+##  7 West Midlands 1    11 All    63184  64516  67074  68873
+##  8 West Midlands 2    11 All    33207  34097  35238  36394
+##  9 West Midlands 1    12 All    64639  63569  64847  67532
+## 10 West Midlands 2    12 All    33645  33370  34181  35424</code></pre>
+<p>Finally, now we have a dataset we can use! Lets now do what we set out to do. Lets find the toal per geography per year!</p>
+<pre class="r"><code># New set of unique geographies
+geography_set = unique(total_by_geog$Geography)
+
+num_geographies = length(geography_set)
+population_per_geog = data.frame(Geography = geography_set,
+                                 total_2013 = c(rep(0, num_geographies)),
+                                 total_2014 = c(rep(0, num_geographies)),
+                                 total_2015 = c(rep(0, num_geographies)),
+                                 total_2016 = c(rep(0, num_geographies))
+                                 )
+
+# Loop through each geography
+for (i in 1:length(geography_set)) {
+    
+    # Start and end indexes for each geography in cleaned data
+    start_index = 91*(i-1) + 1
+    end_index = 91*i
+    
+    # Find the sums of all age catagories per geography
+    population_per_geog[i, 2] = sum(total_by_geog[start_index:end_index , 4])
+    population_per_geog[i, 3] = sum(total_by_geog[start_index:end_index , 5])
+    population_per_geog[i, 4] = sum(total_by_geog[start_index:end_index , 6])
+    population_per_geog[i, 5] = sum(total_by_geog[start_index:end_index , 7])
+    
+}
+
+head(population_per_geog, 10)</code></pre>
+<pre><code>##                               Geography total_2013 total_2014 total_2015
+## 1                         Aberdeen City     227070     228920     230350
+## 2                         Aberdeenshire     257770     260530     261960
+## 3                                  Adur      62505      63176      63429
+## 4                             Allerdale      96208      96471      96660
+## 5                          Amber Valley     123498     123942     124069
+## 6                                 Angus     116290     116740     116900
+## 7               Antrim and Newtownabbey     139536     139966     140467
+## 8                   Ards and North Down     157640     205711     158797
+## 9                       Argyll and Bute      88050      87650      86890
+## 10 Armagh City, Banbridge and Craigavon     203757     336830     207797
+##    total_2016
+## 1      229840
+## 2      262190
+## 3       63506
+## 4       96956
+## 5      124645
+## 6      116520
+## 7      141032
+## 8      159593
+## 9       87130
+## 10     210260</code></pre>
+<p>And finally we can find the minimum values per year and where they occur.</p>
+<pre class="r"><code># Since its only four years, we dont need a loop or anything more complicated
+population_per_geog[which.min(population_per_geog$total_2013), ]</code></pre>
+<pre><code>##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308</code></pre>
+<pre class="r"><code>population_per_geog[which.min(population_per_geog$total_2014), ]</code></pre>
+<pre><code>##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308</code></pre>
+<pre class="r"><code>population_per_geog[which.min(population_per_geog$total_2015), ]</code></pre>
+<pre><code>##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308</code></pre>
+<pre class="r"><code>population_per_geog[which.min(population_per_geog$total_2016), ]</code></pre>
+<pre><code>##           Geography total_2013 total_2014 total_2015 total_2016
+## 191 Isles of Scilly       2251       2280       2324       2308</code></pre>
+<p>Interesting, but not surprising.</p>
+</div>
+</div>
+<div id="question-3" class="section level2">
+<h2>Question 3</h2>
+<div id="summary-2" class="section level4">
+<h4>Summary:</h4>
+<ul>
+<li>The greatest female to male ratio belonged to: Knowsley at 1.103591</li>
+<li>The lowest female to male ratio belonged to: London at 0.8084654</li>
+<li>There was an issue with a geography being duplicated, fixed it by finding it and reanming it</li>
+<li>We defined change in two different ways and saw very different results</li>
+</ul>
+<p>Here our task is arguably simpler than the previous one. One way to proceed is to create a new data frame by dividing the female labelled rows by the male labelled rows, and then use that as a dataset for all of our later analysis in this question.</p>
+<p>As with the totals we used before, we also need to rename the west midlands rows for each of the female and male datasets.</p>
+<p>And by the way, I know I could create a function for renaming the alternating geographies, but this isnt Python and I’m sure that I wont need this code chunk ever again, so lets just copy and paste…</p>
+<p>Lets go:</p>
+<pre class="r"><code># Find and seperate the rows labelled female and male by sex
+females_by_geog = cleaned_data[cleaned_data$Sex == 'Female', ]
+males_by_geog = cleaned_data[cleaned_data$Sex == 'Male', ]
+
+# Indexes for all &quot;west midlands&quot;&quot; rows (same between all, female and male sets)
+west_mid_indexes = c(which(females_by_geog$Geography == &quot;West Midlands&quot;))
+
+# Assign them new names in an alternating pattern
+for (i in west_mid_indexes) {
+    
+    if (i %% 2 == 1) {
+        females_by_geog$Geography[i] = &quot;West Midlands 1&quot;
+        males_by_geog$Geography[i] = &quot;West Midlands 1&quot;
+    } else {
+        females_by_geog$Geography[i] = &quot;West Midlands 2&quot;
+        males_by_geog$Geography[i] = &quot;West Midlands 2&quot;
+    }
+    
+}
+
+females_by_geog[west_mid_indexes[1:10], ]</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##    Geography         Age Sex    `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 West Midlands 1     0 Female  19682  19357  19251  19460
+##  2 West Midlands 2     0 Female  35147  34524  33987  34494
+##  3 West Midlands 1     1 Female  20095  19771  19439  19407
+##  4 West Midlands 2     1 Female  36101  35472  34883  34470
+##  5 West Midlands 1    10 Female  31226  32448  33429  34671
+##  6 West Midlands 2    10 Female  16507  17058  17692  18521
+##  7 West Midlands 1    11 Female  30888  31393  32631  33624
+##  8 West Midlands 2    11 Female  16171  16555  17150  17775
+##  9 West Midlands 1    12 Female  31695  31046  31538  32833
+## 10 West Midlands 2    12 Female  16519  16241  16590  17212</code></pre>
+<pre class="r"><code>males_by_geog[west_mid_indexes[1:10], ]</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##    Geography         Age Sex   `2013` `2014` `2015` `2016`
+##    &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 West Midlands 1     0 Male   37434  36440  35964  36480
+##  2 West Midlands 2     0 Male   20932  20593  20141  20451
+##  3 West Midlands 1     1 Male   38294  37738  36820  36337
+##  4 West Midlands 2     1 Male   21478  20969  20667  20245
+##  5 West Midlands 1    10 Male   33012  34232  34986  35907
+##  6 West Midlands 2    10 Male   17463  17995  18497  19255
+##  7 West Midlands 1    11 Male   32296  33123  34443  35249
+##  8 West Midlands 2    11 Male   17036  17542  18088  18619
+##  9 West Midlands 1    12 Male   32944  32523  33309  34699
+## 10 West Midlands 2    12 Male   17126  17129  17591  18212</code></pre>
+<p>To find the totals, its the same process as before pretty much, but we should note that since the female and male datasets are pretty much identical by the first collumn, many calculations and sortings only have to be done once for one of the datasets and can be used for both.</p>
+<pre class="r"><code># New set of unique geographies
+geography_set = unique(females_by_geog$Geography)
+
+num_geographies = length(geography_set)
+total_fem_per_geog = data.frame(Geography = geography_set,
+                                total_2013 = c(rep(0, num_geographies)),
+                                total_2014 = c(rep(0, num_geographies)),
+                                total_2015 = c(rep(0, num_geographies)),
+                                total_2016 = c(rep(0, num_geographies))
+                                )
+total_male_per_geog = data.frame(Geography = geography_set,
+                                 total_2013 = c(rep(0, num_geographies)),
+                                 total_2014 = c(rep(0, num_geographies)),
+                                 total_2015 = c(rep(0, num_geographies)),
+                                 total_2016 = c(rep(0, num_geographies))
+                                 )
+
+# Loop through each geography
+for (i in 1:length(geography_set)) {
+    
+    # Start and end indexes for each geography in cleaned data
+    start_index = 91*(i-1) + 1
+    end_index = 91*i
+    
+    # Find the sums of all females of all age catagories per geography
+    total_fem_per_geog[i, 2] = sum(females_by_geog[start_index:end_index , 4])
+    total_fem_per_geog[i, 3] = sum(females_by_geog[start_index:end_index , 5])
+    total_fem_per_geog[i, 4] = sum(females_by_geog[start_index:end_index , 6])
+    total_fem_per_geog[i, 5] = sum(females_by_geog[start_index:end_index , 7])
+    
+    # Find the sums of all males of all age catagories per geography
+    total_male_per_geog[i, 2] = sum(males_by_geog[start_index:end_index , 4])
+    total_male_per_geog[i, 3] = sum(males_by_geog[start_index:end_index , 5])
+    total_male_per_geog[i, 4] = sum(males_by_geog[start_index:end_index , 6])
+    total_male_per_geog[i, 5] = sum(males_by_geog[start_index:end_index , 7])
+    
+}
+
+head(total_fem_per_geog, 10)</code></pre>
+<pre><code>##                               Geography total_2013 total_2014 total_2015
+## 1                         Aberdeen City     114535     115443     115936
+## 2                         Aberdeenshire     129734     131059     131816
+## 3                                  Adur      32294      32568      32676
+## 4                             Allerdale      48858      49034      49069
+## 5                          Amber Valley      62898      63098      63133
+## 6                                 Angus      59687      59923      59950
+## 7               Antrim and Newtownabbey      71790      72068      72344
+## 8                   Ards and North Down      81349     103853      81866
+## 9                       Argyll and Bute      44583      44245      43915
+## 10 Armagh City, Banbridge and Craigavon     102976     174422     104770
+##    total_2016
+## 1      115719
+## 2      131819
+## 3       32595
+## 4       49127
+## 5       63432
+## 6       59751
+## 7       72544
+## 8       82248
+## 9       43811
+## 10     105937</code></pre>
+<pre class="r"><code>head(total_male_per_geog, 10)</code></pre>
+<pre><code>##                               Geography total_2013 total_2014 total_2015
+## 1                         Aberdeen City     112535     113477     114414
+## 2                         Aberdeenshire     128036     129471     130144
+## 3                                  Adur      30211      30608      30753
+## 4                             Allerdale      47350      47437      47591
+## 5                          Amber Valley      60600      60844      60936
+## 6                                 Angus      56603      56817      56950
+## 7               Antrim and Newtownabbey      67746      67898      68123
+## 8                   Ards and North Down      76291     101858      76931
+## 9                       Argyll and Bute      43467      43405      42975
+## 10 Armagh City, Banbridge and Craigavon     100781     162408     103027
+##    total_2016
+## 1      114121
+## 2      130371
+## 3       30911
+## 4       47829
+## 5       61213
+## 6       56769
+## 7       68488
+## 8       77345
+## 9       43319
+## 10     104323</code></pre>
+<p>Now we have data frames for almost exactly what we want, all thats left is to effectivley divide the female dataset by the male dataset.</p>
+<pre class="r"><code>ratios_per_geog = total_fem_per_geog
+colnames(ratios_per_geog) = c(&quot;Geography&quot;, &quot;Ratios_2013&quot;, &quot;Ratios_2014&quot;,
+                              &quot;Ratios_2015&quot;, &quot;Ratios_2016&quot;)
+ratios_per_geog[ , 2:5] = total_fem_per_geog[ , 2:5]/total_male_per_geog[ , 2:5]
+
+head(ratios_per_geog, 10)</code></pre>
+<pre><code>##                               Geography Ratios_2013 Ratios_2014
+## 1                         Aberdeen City    1.017772    1.017325
+## 2                         Aberdeenshire    1.013262    1.012265
+## 3                                  Adur    1.068948    1.064036
+## 4                             Allerdale    1.031848    1.033666
+## 5                          Amber Valley    1.037921    1.037046
+## 6                                 Angus    1.054485    1.054667
+## 7               Antrim and Newtownabbey    1.059694    1.061416
+## 8                   Ards and North Down    1.066299    1.019586
+## 9                       Argyll and Bute    1.025675    1.019353
+## 10 Armagh City, Banbridge and Craigavon    1.021780    1.073974
+##    Ratios_2015 Ratios_2016
+## 1     1.013303    1.014003
+## 2     1.012847    1.011107
+## 3     1.062530    1.054479
+## 4     1.031056    1.027138
+## 5     1.036054    1.036250
+## 6     1.052678    1.052529
+## 7     1.061961    1.059222
+## 8     1.064148    1.063391
+## 9     1.021873    1.011358
+## 10    1.016918    1.015471</code></pre>
+<pre class="r"><code>ratios_per_geog[which.max(ratios_per_geog$Ratios_2013), 1:2]</code></pre>
+<pre><code>##     Geography Ratios_2013
+## 200  Knowsley    1.103591</code></pre>
+<pre class="r"><code># I was curious...
+ratios_per_geog[which.min(ratios_per_geog$Ratios_2013), 1:2]</code></pre>
+<pre><code>##         Geography Ratios_2013
+## 79 City of London   0.8084654</code></pre>
+<pre class="r"><code># Just checking to make sure that you aren't lying to me...
+ratios_per_geog[ratios_per_geog$Geography == &quot;Fylde&quot;, 5]</code></pre>
+<pre><code>## [1] 1.044192</code></pre>
+<p>And here are our answers!</p>
+<p>Now when we talk about change the most obvious method to discuss it would be to calculate the absolute difference between the 2016 and 2013 ratios, but we should stop and think: is that really what change means? Suppose that for one geography, the ratio in 2016 was 1.2 and in 2013 was 0.9, growing by 0.1 each year. This could mean a change of 0.3 and we could call this the largest change. But what if another geography went from 0.9 to 0.4 then to 1.8 down to 1.2? The change here would be (by the previous definition) 0.3, but clearly between 2013 and 2016, this geography has experienced much more change!</p>
+<p>For this reason, we will define two types of changes. One will of course be the absolute difference between the value at 2016 and 2013, wheras the other will be the sum of absolute differences between the values at each year in between and including 2013 and 2016.</p>
+<p>For the simple method, lets just create a frame which records the absolute value of the differences between the 2013 and 2016 collumns</p>
+<pre class="r"><code>abs_change_per_geog = ratios_per_geog[ , 1:2]
+colnames(abs_change_per_geog) = c(&quot;Geography&quot;, &quot;Change_2013&quot;)
+
+# Simple elementwise subtraction and absolute value
+abs_change_per_geog[ , 2] = abs(ratios_per_geog[ , 5] - ratios_per_geog[ , 2])
+
+abs_change_per_geog[which.max(abs_change_per_geog$Change_2013), ]</code></pre>
+<pre><code>##     Geography Change_2013
+## 237     Moray  0.06744424</code></pre>
+<pre class="r"><code>abs_change_per_geog[which.min(abs_change_per_geog$Change_2013), ]</code></pre>
+<pre><code>##      Geography  Change_2013
+## 425 Winchester 3.113903e-05</code></pre>
+<pre class="r"><code>cum_change_per_geog = ratios_per_geog[ , 1:4]
+colnames(cum_change_per_geog) = c(&quot;Geography&quot;, &quot;2013-&gt;2014&quot;,
+                                  &quot;2014-&gt;2015&quot;, &quot;2015-&gt;2016&quot;)
+
+# Simple elementwise subtraction and absolute value
+cum_change_per_geog[ , 2:4] = abs(ratios_per_geog[ , 3:5] - ratios_per_geog[ , 2:4])
+
+total_cum_change = ratios_per_geog[ , 1:2]
+colnames(total_cum_change) = c(&quot;Geography&quot;, &quot;Abs_cumulative_change&quot;)
+
+# Sum up all the changes over the years
+total_cum_change[ , 2] = rowSums(cum_change_per_geog[ , 2:4])
+
+total_cum_change[which.max(total_cum_change$Abs_cumulative_change), ]</code></pre>
+<pre><code>##    Geography Abs_cumulative_change
+## 25   Belfast             0.1112881</code></pre>
+<pre class="r"><code>total_cum_change[which.min(total_cum_change$Abs_cumulative_change), ]</code></pre>
+<pre><code>##     Geography Abs_cumulative_change
+## 361   Suffolk          0.0004002879</code></pre>
+<p>So is seems belfast has seen the most changes over the years to its ratio, and Suffolk has had the least. This is a much more interesting view of the change, now we can investigate belfast and find out whats causing this rather extreme change! Infact, we could have been smarter and seen what direction it changes in (more males or females overall etc.)</p>
+</div>
+</div>
+<div id="question-4" class="section level2">
+<h2>Question 4</h2>
+<div id="summary-3" class="section level4">
+<h4>Summary:</h4>
+<ul>
+<li>Plotting the graph was quite helpful, some interesting analysis was made</li>
+<li>We used both or definitions for change to discuss the over-65 population</li>
+<li>We found a potential sneaky plot against us</li>
+</ul>
+<p>Lets go and start making some plots. We already have some data frames from before that we can reuse, and from these we can quite easily find the total population by age for each sex. After that, its as simple as a 2 day long war with ggplot to force it to submit to you.</p>
+<pre class="r"><code>females_by_age = females_by_geog[ , c(2, 7)]
+males_by_age = males_by_geog[ , c(2, 7)]
+
+age_dist = data_frame(Ages = c(0:90),
+                      Total_females = c(rep(0, 91)),
+                      Total_males = c(rep(0, 91)))
+
+# Finding sums of all age categories
+for (age in 0:90) {
+    
+    age_dist[age+1, 2] = colSums(females_by_age[females_by_age$Age == age, 2])
+    age_dist[age+1, 3] = colSums(males_by_age[males_by_age$Age == age, 2])
+    
+}
+
+# Some fancy but annoying ggplotting
+ggplot(age_dist) +
+    geom_line(aes(x = age_dist$Ages, y = age_dist$Total_females, color = &quot;Female&quot;), size = 1) +
+    geom_line(aes(x = age_dist$Ages, y = age_dist$Total_males, color = &quot;Male&quot;), size = 1) +
+    scale_color_manual(values=c(&quot;Female&quot;=&quot;blue&quot;, &quot;Male&quot;=&quot;red&quot;)) +
+    theme_bw() +
+    scale_y_continuous(breaks = seq(0, 1.1*max(age_dist[ , 2:3]), 5*(10^5))) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          axis.line = element_line(colour = &quot;black&quot;, size = 1.5)) + 
+    xlab(&quot;Age&quot;) +
+    ylab(&quot;Population size&quot;) + 
+    ggtitle(&quot;Population in 2016 based on Age&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" width="672" /></p>
+<p>So here we see some interesting things. It seems like initially, the number of males is signinficantly higher than females, and it seems to stay that way quite consistently until about the age of 28. The higher birth rate of male children is indeed strange as outside of wartime, youd assume it’s pretty much 50/50.</p>
+<p>The decrease in the number of males in the “middle-age” bracket could be due to the higher death rates for men due to not only the terrifying male suicide rate this country has, but also possibly men having greater risks of contracting or dying to terminal ilnesses or conditions. It may even have to do with the professions that some men work in being more dangerous, and the risk of death before retirement being greater.</p>
+<p>This trend seems to continue later too, as men also have a lower life expectancy than women, and so its very normal to see that the number of males heavily decreases compared to females in the late 80’s and 90s.</p>
+<p>The spike we see at the end of the graph is of course due to the date grouping all 90+ year olds into one category.</p>
+<p>Now to look at the proportions of over 65’s in each geography. For the first part, we will look at any particular spikes or dips over any of the 4 years.</p>
+<pre class="r"><code>over65s_by_geog = ratios_per_geog[ , ]
+colnames(over65s_by_geog) = c(&quot;Geography&quot;, &quot;2013&quot;, &quot;2014&quot;, &quot;2015&quot;, &quot;2016&quot;)
+
+# Finding sums of all age categories
+for (geography in geography_set) {
+    
+    temp_frame = total_by_geog[(total_by_geog$Geography == geography), ]
+    over65s_by_geog[over65s_by_geog$Geography == geography, 2:5] = colSums(temp_frame[temp_frame$Age &gt;= 65, 4:7])
+}
+
+# Dividing be total population to find proportions
+over65s_by_geog[2:5] = over65s_by_geog[2:5] / population_per_geog[2:5]
+head(over65s_by_geog, 10)</code></pre>
+<pre><code>##                               Geography      2013      2014      2015
+## 1                         Aberdeen City 0.1484564 0.1496680 0.1494508
+## 2                         Aberdeenshire 0.1721806 0.1757571 0.1783135
+## 3                                  Adur 0.2285097 0.2312112 0.2317867
+## 4                             Allerdale 0.2232870 0.2287527 0.2326505
+## 5                          Amber Valley 0.2028454 0.2086056 0.2127929
+## 6                                 Angus 0.2147734 0.2196762 0.2230710
+## 7               Antrim and Newtownabbey 0.1536091 0.1571382 0.1593186
+## 8                   Ards and North Down 0.1897742 0.1470218 0.1993929
+## 9                       Argyll and Bute 0.2343101 0.2409127 0.2454137
+## 10 Armagh City, Banbridge and Craigavon 0.1446871 0.1459609 0.1490926
+##         2016
+## 1  0.1515489
+## 2  0.1821999
+## 3  0.2319781
+## 4  0.2369528
+## 5  0.2165590
+## 6  0.2273172
+## 7  0.1616725
+## 8  0.2033360
+## 9  0.2474004
+## 10 0.1506849</code></pre>
+<p>Now lets find the extreme values:</p>
+<pre class="r"><code># Maximums
+over65s_by_geog[which.max(over65s_by_geog[ , 2]), c(1,2)]</code></pre>
+<pre><code>##         Geography      2013
+## 418 West Somerset 0.3119464</code></pre>
+<pre class="r"><code>over65s_by_geog[which.max(over65s_by_geog[ , 3]), c(1,3)]</code></pre>
+<pre><code>##         Geography     2014
+## 418 West Somerset 0.318542</code></pre>
+<pre class="r"><code>over65s_by_geog[which.max(over65s_by_geog[ , 4]), c(1,4)]</code></pre>
+<pre><code>##         Geography      2015
+## 418 West Somerset 0.3268029</code></pre>
+<pre class="r"><code>over65s_by_geog[which.max(over65s_by_geog[ , 5]), c(1,5)]</code></pre>
+<pre><code>##         Geography      2016
+## 418 West Somerset 0.3331779</code></pre>
+<pre class="r"><code># Minimums
+over65s_by_geog[which.min(over65s_by_geog[ , 2]), c(1,2)]</code></pre>
+<pre><code>##         Geography       2013
+## 387 Tower Hamlets 0.06086702</code></pre>
+<pre class="r"><code>over65s_by_geog[which.min(over65s_by_geog[ , 3]), c(1,3)]</code></pre>
+<pre><code>##         Geography      2014
+## 387 Tower Hamlets 0.0601764</code></pre>
+<pre class="r"><code>over65s_by_geog[which.min(over65s_by_geog[ , 4]), c(1,4)]</code></pre>
+<pre><code>##         Geography       2015
+## 387 Tower Hamlets 0.05991139</code></pre>
+<pre class="r"><code>over65s_by_geog[which.min(over65s_by_geog[ , 5]), c(1,5)]</code></pre>
+<pre><code>##         Geography       2016
+## 387 Tower Hamlets 0.05991721</code></pre>
+<p>Once again, we something that is incredibly interesting. For all 4 years, West somerset has consistently had around 1/3 of its population at over 65 years of age, and Tower Hamlets has had under 7% of the same age group! What is it about these places that draws or repels certain age groups? Not too surprising once you actually visit tower hamlets though, and I can imagine the same for West somerset…</p>
+<p>Now finally to calculate the cahnges over time, and once again we will use both of our definitions for this:</p>
+<pre class="r"><code>over65s_simple_change = over65s_by_geog[ , 1:2]
+colnames(over65s_simple_change) = c(&quot;Geography&quot;, &quot;Change&quot;)
+
+over65s_simple_change[ , 2] = abs(over65s_by_geog[ , 5] - over65s_by_geog[ , 2])
+
+over65s_simple_change[which.max(over65s_simple_change[ , 2]) , ]</code></pre>
+<pre><code>##                 Geography     Change
+## 107 Dumfries and Galloway 0.07504721</code></pre>
+<pre class="r"><code>over65s_simple_change[which.min(over65s_simple_change[ , 2]) , ]</code></pre>
+<pre><code>##                       Geography       Change
+## 23 Bath and North East Somerset 3.659411e-05</code></pre>
+<p>It seems that looking at the net loss from 2016 to 2013 reveals that the proportion of over 65s in Dumfries and Galloway changed by a significant amount, Wheras it seems Bath and NE Somerset has stayed pretty much the same.</p>
+<p>Finally, the cumulative change over the years:</p>
+<pre class="r"><code>over65s_cum_changes = over65s_by_geog[ , 1:4]
+colnames(over65s_cum_changes) = c(&quot;Geography&quot;, &quot;2013-&gt;2014&quot;,
+                                    &quot;2014-&gt;2015&quot;, &quot;2015-&gt;2016&quot;)
+
+over65s_cum_changes[ , 2:4] = over65s_by_geog[ , 3:5] - over65s_by_geog[ , 2:4]
+
+over65s_net_change = over65s_by_geog[ , 1:2]
+colnames(over65s_simple_change) = c(&quot;Geography&quot;, &quot;net_change&quot;)
+
+over65s_net_change[ , 2] = rowSums(over65s_cum_changes[ , 2:4])
+
+over65s_net_change[which.max(over65s_net_change[ , 2]) , ]</code></pre>
+<pre><code>##                 Geography       2013
+## 107 Dumfries and Galloway 0.07504721</code></pre>
+<pre class="r"><code>over65s_net_change[which.min(over65s_net_change[ , 2]) , ]</code></pre>
+<pre><code>##    Geography        2013
+## 60   Cardiff -0.05711526</code></pre>
+<p>Once again, Dumfries and Galloway takes the lead as the most dynamic and fast-moving scene for over 65’s, and now we see Cardiff over the years has actually either not changed much or has averaged out to a small loss in the over 65’s</p>
+</div>
+<div id="this-concludes-the-report." class="section level3">
+<h3>This concludes the report.</h3>
+<p>Oh wait, dont think I missed this. Thought you could fool me?</p>
+<pre class="r"><code>population_per_geog[which.max(population_per_geog$total_2013), ]</code></pre>
+<pre><code>##          Geography total_2013 total_2014 total_2015 total_2016
+## 391 United Kingdom   64105654   64596752   65110034   65648054</code></pre>
+<p>Well so far it doesnt seem to have affected any of our results adversely. Even when summing results or comparing, the constant addition from this geography would’ve refelected the proportions we have been dealing with in a consistent way. By this I mean that the effects on the totals or ratios that this geography has had has been equivalent for all age groups of Sexes over all the comparisons. This shoudlnt be a problem, even for the other geographies like “Great Britain”, “England and wales”, “England”, “Wales” and so on.</p>
 </div>
 </div>
 </div>
